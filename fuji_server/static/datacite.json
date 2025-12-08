@@ -1,0 +1,1432 @@
+{
+    "data": [
+        {
+            "id": "ethz.ubasojs",
+            "type": "repositories",
+            "attributes": {
+                "name": "027.7 - Zeitschrift für Bibliothekskultur",
+                "symbol": "ETHZ.UBASOJS",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2013,
+                "alternateName": null,
+                "description": null,
+                "clientType": "periodical",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {
+                    "issnl": null,
+                    "print": null,
+                    "electronic": null
+                },
+                "url": "https://0277.ch/",
+                "software": null,
+                "created": "2013-03-21T11:02:47Z",
+                "updated": "2021-01-21T09:19:17Z",
+                "subjects": [],
+                "isActive": false
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "cqik",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": []
+                }
+            }
+        },
+        {
+            "id": "crui.unipd",
+            "type": "repositories",
+            "attributes": {
+                "name": "1000 Functional Connectomes Project",
+                "symbol": "CRUI.UNIPD",
+                "re3data": "https://doi.org/10.17616/R3W05R",
+                "opendoar": null,
+                "year": 2018,
+                "alternateName": null,
+                "description": "The FCP entailed the aggregation and public release (via www.nitrc.org) of over 1200 resting state fMRI (R-fMRI) datasets collected from 33 sites around the world.",
+                "clientType": "repository",
+                "repositoryType": [
+                    "disciplinary"
+                ],
+                "language": [
+                    "en"
+                ],
+                "certificate": [],
+                "domains": "unipd.it,*.unipd.it,francigena-unipd.com,*.francigena-unipd.com,postcolonialitalia.it,*.postcolonialitalia.it,avtobiografija.com,*.avtobiografija.com,padovauniversitypress.it,*.padovauniversitypress.it,argonauti.padovauniversitypress.it,hdl.handle.net",
+                "issn": {},
+                "url": "https://fcon_1000.projects.nitrc.org/fcpClassic/FcpTable.html",
+                "software": "Other",
+                "created": "2018-03-21T10:50:49Z",
+                "updated": "2025-02-10T14:40:55Z",
+                "subjects": [
+                    {
+                        "lang": null,
+                        "subject": "Basic medicine",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "3.1"
+                    },
+                    {
+                        "lang": null,
+                        "subject": "Biological sciences",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "1.6"
+                    },
+                    {
+                        "lang": null,
+                        "subject": "Computer and information sciences",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "1.2"
+                    },
+                    {
+                        "lang": null,
+                        "subject": "Clinical medicine",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "3.2"
+                    }
+                ],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "gttv",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.25430",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "sjkb.voicetk",
+            "type": "repositories",
+            "attributes": {
+                "name": "20. Század Hangja Archívum és Kutatóműhely",
+                "symbol": "SJKB.VOICETK",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2024,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "voices.tk.mta.hu",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2024-10-07T10:43:36Z",
+                "updated": "2024-10-07T14:31:13Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "arp",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.71756",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "psu.dmr-first",
+            "type": "repositories",
+            "attributes": {
+                "name": "2DCC - DMR-FIRST",
+                "symbol": "PSU.DMR-FIRST",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2023,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2023-08-22T19:35:44Z",
+                "updated": "2023-09-07T20:48:03Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "psu",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.60551",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "delft.data4tu",
+            "type": "repositories",
+            "attributes": {
+                "name": "4TU.ResearchData",
+                "symbol": "DELFT.DATA4TU",
+                "re3data": "https://doi.org/10.17616/R3VG6N",
+                "opendoar": null,
+                "year": 2011,
+                "alternateName": null,
+                "description": "4TU.ResearchData, previously known as 4TU.Centre for Research Data, is a research data repository dedicated to the science, engineering and design disciplines. It offers the knowledge, experience and the tools to manage, publish and find scientific research data in a standardized, secure and well-documented manner. 4TU.ResearchData provides the research community with: Customised advice and support on research data management; A long-term repository for scientific research data; Support for current research projects; Tools to enhance reuse of research data.",
+                "clientType": "repository",
+                "repositoryType": [
+                    "disciplinary",
+                    "institutional"
+                ],
+                "language": [
+                    "nl",
+                    "en"
+                ],
+                "certificate": [
+                    "CoreTrustSeal"
+                ],
+                "domains": "*,data.4tu.nl",
+                "issn": {},
+                "url": "https://data.4tu.nl/portal",
+                "software": null,
+                "created": "2011-09-30T09:18:16Z",
+                "updated": "2025-04-16T09:41:51Z",
+                "subjects": [
+                    {
+                        "lang": null,
+                        "subject": "Biological sciences",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "1.6"
+                    },
+                    {
+                        "lang": null,
+                        "subject": "Computer and information sciences",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "1.2"
+                    },
+                    {
+                        "lang": null,
+                        "subject": "Earth and related environmental sciences",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "1.5"
+                    },
+                    {
+                        "lang": null,
+                        "subject": "Civil engineering",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "2.1"
+                    },
+                    {
+                        "lang": null,
+                        "subject": "Environmental engineering",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "2.7"
+                    },
+                    {
+                        "lang": null,
+                        "subject": "Social and economic geography",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "5.7"
+                    }
+                ],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "scpr",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.4121",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "akbild.arepository",
+            "type": "repositories",
+            "attributes": {
+                "name": "]a[repository",
+                "symbol": "AKBILD.AREPOSITORY",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2019,
+                "alternateName": null,
+                "description": "The ]a[repository is a digital asset management system of the Academy of Fine Arts Vienna, which enables the digital storage, management and presentation of digital media objects from the arts & sciences. The repository offers access to a number of digital collections, e.g. the Academy’s publication series and the graduates' catalog.",
+                "clientType": "repository",
+                "repositoryType": [
+                    "institutional"
+                ],
+                "language": [
+                    "de",
+                    "en"
+                ],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": "https://repository.akbild.ac.at",
+                "software": null,
+                "created": "2019-12-15T13:24:46Z",
+                "updated": "2022-05-21T16:04:41Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "akbild",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.21937",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "jwln.bkrkhv",
+            "type": "repositories",
+            "attributes": {
+                "name": "A+BE",
+                "symbol": "JWLN.BKRKHV",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2025,
+                "alternateName": "Architecture and the Built Environment",
+                "description": "Repository of PhD theses in the field of architecture and the built environment  by the Delft University of Technology.",
+                "clientType": "repository",
+                "repositoryType": [
+                    "disciplinary"
+                ],
+                "language": [
+                    "en"
+                ],
+                "certificate": [],
+                "domains": "aplusbe.eu",
+                "issn": {},
+                "url": "https://aplusbe.eu",
+                "software": "Open Journal Systems (OJS)",
+                "created": "2025-03-09T09:41:39Z",
+                "updated": "2025-03-29T22:40:56Z",
+                "subjects": [
+                    {
+                        "lang": null,
+                        "subject": "FOS: Engineering and technology",
+                        "valueUri": null,
+                        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+                        "subjectScheme": "Fields of Science and Technology (FOS)",
+                        "classificationCode": "2"
+                    }
+                ],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "jwln",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.71690",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "dk.aau",
+            "type": "repositories",
+            "attributes": {
+                "name": "Aalborg University Library",
+                "symbol": "DK.AAU",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2012,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [
+                    "multidisciplinary"
+                ],
+                "language": [],
+                "certificate": [],
+                "domains": "vbn.aau.dk,journals.aau.dk",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2012-11-28T08:22:41Z",
+                "updated": "2022-06-07T10:45:41Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "ejij",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.5278",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "csc.aalto",
+            "type": "repositories",
+            "attributes": {
+                "name": "Aalto University (ACRIS)",
+                "symbol": "CSC.AALTO",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2018,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2018-08-27T07:34:01Z",
+                "updated": "2025-11-07T10:48:07Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "acjp",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.24342",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "rads.amku",
+            "type": "repositories",
+            "attributes": {
+                "name": "Abay Myrzakhmetov Kokshetau University",
+                "symbol": "RADS.AMKU",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2020,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2020-09-04T11:10:07Z",
+                "updated": "2021-07-14T15:35:37Z",
+                "subjects": [],
+                "isActive": false
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "rads",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.34672",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "avqt.hxlqvd",
+            "type": "repositories",
+            "attributes": {
+                "name": "Abertay Datasets",
+                "symbol": "AVQT.HXLQVD",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2022,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [
+                    "institutional"
+                ],
+                "language": [
+                    "en"
+                ],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": "https://rke.abertay.ac.uk/",
+                "software": null,
+                "created": "2022-10-31T15:09:57Z",
+                "updated": "2023-03-30T10:26:05Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "avqt",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.57995",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "bl.aber",
+            "type": "repositories",
+            "attributes": {
+                "name": "Aberystwyth Research Portal",
+                "symbol": "BL.ABER",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2016,
+                "alternateName": "Porth Ymchwil Aberystwyth",
+                "description": "The Aberystwyth Research Portal makes the very best of Aberystwyth University's staff and postgraduate research openly available online, free of charge.\n\nContent in the portal includes published outputs, postgraduate theses, project details, as well as records for other esteem activities. The portal also includes Personal Profiles of all current staff and research students. This allows browsers of the Portal to view on one page all related research content linked to that person. Browsing is also possible by department.",
+                "clientType": "repository",
+                "repositoryType": [
+                    "institutional"
+                ],
+                "language": [
+                    "en",
+                    "cy"
+                ],
+                "certificate": [],
+                "domains": "*.aber.ac.uk,*.elsevierpure.com",
+                "issn": {},
+                "url": "https://research.aber.ac.uk",
+                "software": "Pure",
+                "created": "2016-02-17T15:36:23Z",
+                "updated": "2024-04-08T09:27:32Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "hbvj",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.20391",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "ydsr.vdzmrk",
+            "type": "repositories",
+            "attributes": {
+                "name": "ABMI-Repo",
+                "symbol": "YDSR.VDZMRK",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2023,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": "https://abmi.ca/home/data-analytics",
+                "software": null,
+                "created": "2023-12-15T19:16:48Z",
+                "updated": "2023-12-15T19:31:47Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "ydsr",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.60759",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "dlr.ei-efb",
+            "type": "repositories",
+            "attributes": {
+                "name": "Abteilung für europäische Forschungs- und Bildungspolitik",
+                "symbol": "DLR.EI-EFB",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2023,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2023-10-18T07:58:39Z",
+                "updated": "2023-11-28T10:39:19Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "dlr",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.60886",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "subgoe.agl",
+            "type": "repositories",
+            "attributes": {
+                "name": "Abteilung Germanistische Linguistik GAU",
+                "symbol": "SUBGOE.AGL",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2020,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [
+                    "de"
+                ],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2020-11-02T12:16:12Z",
+                "updated": "2020-11-12T13:49:01Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "wwpx",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.48406",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "ivuw.acl",
+            "type": "repositories",
+            "attributes": {
+                "name": "Academia das Ciências de Lisboa",
+                "symbol": "IVUW.ACL",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2023,
+                "alternateName": "RC - Academia das Ciências de Lisboa",
+                "description": "A **Academia das Ciências de Lisboa** é uma das mais antigas instituições científicas nacionais de existência contínua. Fundada em 1779, é atualmente uma instituição científica de utilidade pública, dotada de personalidade jurídica e de autonomia administrativa. Tem à sua guarda um vasto e rico património bibliográfico, arquivístico e museológico, promove e incentiva a investigação científica, o estudo da língua e demais formas de cultura nacional, colabora em atividades de educação e extensão cultural.\n\nO Repositório Aberto da Academia das Ciências de Lisboa, publica e divulga a produção intelectual e científica institucional, e promove a divulgação do seu acervo bibliográfico. Sempre que possível permite o acesso livre e integral dos documentos.\n\n(www.acad-ciencias.pt/)",
+                "clientType": "repository",
+                "repositoryType": [
+                    "institutional"
+                ],
+                "language": [
+                    "pt"
+                ],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": "https://comum.rcaap.pt/handle/10400.26/43690",
+                "software": "DSpace",
+                "created": "2023-03-06T14:07:30Z",
+                "updated": "2023-04-27T10:51:03Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "ivuw",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.58164",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "inist.anc",
+            "type": "repositories",
+            "attributes": {
+                "name": "Académie Nationale de Chirurgie",
+                "symbol": "INIST.ANC",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2019,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2019-06-20T07:29:13Z",
+                "updated": "2024-05-28T08:45:25Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "aakn",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.26299",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "heallink.acathens",
+            "type": "repositories",
+            "attributes": {
+                "name": "Academy of Athens",
+                "symbol": "HEALLINK.ACATHENS",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2019,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*.academyofathens.gr",
+                "issn": null,
+                "url": null,
+                "software": null,
+                "created": "2019-03-12T07:51:49Z",
+                "updated": "2020-10-15T12:04:33Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "kgio",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.26109",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "assa.repo",
+            "type": "repositories",
+            "attributes": {
+                "name": "Academy of the Social Sciences in Australia",
+                "symbol": "ASSA.REPO",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2023,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2023-11-21T05:05:51Z",
+                "updated": "2024-04-05T08:57:48Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "assa",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.60651",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "krep.szjagu",
+            "type": "repositories",
+            "attributes": {
+                "name": "AcadiaU-DEV",
+                "symbol": "KREP.SZJAGU",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2025,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [
+                    "institutional"
+                ],
+                "language": [
+                    "en"
+                ],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2025-01-27T15:38:19Z",
+                "updated": "2025-01-28T17:07:34Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "krep",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.26108",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "fude.acatech",
+            "type": "repositories",
+            "attributes": {
+                "name": "acatech - Deutsche Akademie der Technikwissenschaften",
+                "symbol": "FUDE.ACATECH",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2021,
+                "alternateName": null,
+                "description": "About acatech – National Academy of Science and Engineering\n\nacatech advises policymakers and the general public, supports policy measures to drive innovation, and represents the interests of the technological sciences internationally. In accordance with its mandate from Germany’s federal government and states, the Academy provides independent, science-based advice that is in the public interest. acatech explains the opportunities and risks of technological developments and helps to ensure that ideas become innovations – innovations that lead to greater prosperity, welfare, and quality of life. acatech brings science and industry together. The Academy’s Members are prominent scientists from the fields of engineering, the natural sciences and medicine, as well as the humanities and social sciences. The Senate is made up of leading figures from major science organisations and from technology companies and associations. In addition to its headquarters at the acatech FORUM in Munich, the Academy also has offices in Berlin and Brussels.",
+                "clientType": "repository",
+                "repositoryType": [
+                    "institutional"
+                ],
+                "language": [
+                    "de",
+                    "en"
+                ],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": "https://www.acatech.de",
+                "software": null,
+                "created": "2021-07-12T08:35:47Z",
+                "updated": "2024-02-14T07:15:29Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "fude",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.48669",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "acclimat.prod",
+            "type": "repositories",
+            "attributes": {
+                "name": "AcclimaTerra - Comité Scientifique Régional sur le Changement Climatique",
+                "symbol": "ACCLIMAT.PROD",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2024,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": null,
+                "created": "2024-12-20T15:45:26Z",
+                "updated": "2024-12-20T15:45:27Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "acclimat",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.71820",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "rhtq.zshxhz",
+            "type": "repositories",
+            "attributes": {
+                "name": "Accounting and Corporate Governance Research  پژوهش های حسابداری و راهبری شرکتی",
+                "symbol": "RHTQ.ZSHXHZ",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2025,
+                "alternateName": null,
+                "description": "The scientific quarterly \" Accounting and Corporate Governance Research\" with scientific validity was launched  with reference to letter No.57457/5/11/13 dated 2022/12/12 based on the resolution of \"the 34th session of the commission for determining the validity of journals in the field of humanities and arts of the Islamic Azad University\" dated 2022/03/01.\n\nAbout the Journal of Accounting and Corporate Governance Research\n\nCountry of Publication: Iran\nLaunched:Autumn2022\nPublisher: Islamic Azad University-Tabriz Branch\nPrinting status: Electronic\nPrinting Occasions: Quarterly\nAccess: Free and free download of articles\nJournal Language: Farsi (English Abstract)\nSpecialty:  Accounting\nJournal Type: Scientific; Research\nType of arbitration: Unnamed arbitration and at least 2 arbitrators\nArbitration time: 2 to 4 months\nReview Time: One week\n\nObjectives and Prospects\n\na) To help to develop the field of accounting and auditing in a specialized way by highlighting the research done in the field of corporate governance system\nb) To strengthen and institutionalize related research and create a platform for familiarizing and applying the new dimensions of the corporate governance system to the business environment\n\nفصلنامه علمی \"پژوهش های حسابداری و راهبری شرکتی\" با اعتبار علمی،باستناد به نامه شماره 57457/5/11/13 مورخ 21/09/1400 بر اساس مصوبه \" سی و چهارمین جلسه کمسیون تعیین اعتبار نشریات حوزه علوم انسانی و هنر دانشگاه آزاد اسلامی \"سی و چهارمین جلسه کمسیون تعیین اعتبار نشریات حوزه علوم انسانی و هنر دانشگاه آزاد اسلامی\"مورخ1400/10/13 راه اندازی شده است.\n\nاهداف و چشم انداز\n\nالف)کمک به توسعه رشته حسابداری و حسابرسی بصورت تخصصی از طریق برجسته نمودن پژوهش های انجام شده در زمینه نظام راهبری شرکتی\n\nب) تقویت و نهادینه کردن پژوهش های مرتبط و بستر سازی جهت آشنایی و بکارگیری ابعاد نوین نظام راهبری شرکتی در محیط کسب و کار",
+                "clientType": "periodical",
+                "repositoryType": [],
+                "language": [
+                    "fa"
+                ],
+                "certificate": [],
+                "domains": "sanad.iau.ir",
+                "issn": {
+                    "issnl": null,
+                    "print": "3060-7248",
+                    "electronic": "3060-7248"
+                },
+                "url": "https://sanad.iau.ir/en/Journal/jacgr",
+                "software": null,
+                "created": "2025-01-18T06:46:46Z",
+                "updated": "2025-01-18T06:52:27Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "rhtq",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.71600",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "dvcf.vzfuba",
+            "type": "repositories",
+            "attributes": {
+                "name": "ACHE Institutional Repository",
+                "symbol": "DVCF.VZFUBA",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2025,
+                "alternateName": null,
+                "description": null,
+                "clientType": "repository",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "*",
+                "issn": {},
+                "url": null,
+                "software": "DSpace",
+                "created": "2025-04-16T14:43:58Z",
+                "updated": "2025-05-16T14:14:34Z",
+                "subjects": [],
+                "isActive": true
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "dvcf",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.71518",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "mtakik.abpa",
+            "type": "repositories",
+            "attributes": {
+                "name": "Acta Biologica Plantarum Agriensis",
+                "symbol": "MTAKIK.ABPA",
+                "re3data": null,
+                "opendoar": null,
+                "year": 2016,
+                "alternateName": null,
+                "description": null,
+                "clientType": "periodical",
+                "repositoryType": [],
+                "language": [],
+                "certificate": [],
+                "domains": "abpa.ektf.hu,publikacio.uni-eszterhazy.hu",
+                "issn": {
+                    "issnl": null,
+                    "print": null,
+                    "electronic": null
+                },
+                "url": null,
+                "software": null,
+                "created": "2016-10-06T14:48:25Z",
+                "updated": "2021-05-28T11:41:57Z",
+                "subjects": [],
+                "isActive": false
+            },
+            "relationships": {
+                "provider": {
+                    "data": {
+                        "id": "cqik",
+                        "type": "providers"
+                    }
+                },
+                "prefixes": {
+                    "data": [
+                        {
+                            "id": "10.21406",
+                            "type": "prefixes"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "meta": {
+        "total": 4075,
+        "totalPages": 163,
+        "page": 1,
+        "years": [
+            {
+                "id": "2025",
+                "title": "2025",
+                "count": 595
+            },
+            {
+                "id": "2024",
+                "title": "2024",
+                "count": 509
+            },
+            {
+                "id": "2023",
+                "title": "2023",
+                "count": 390
+            },
+            {
+                "id": "2022",
+                "title": "2022",
+                "count": 334
+            },
+            {
+                "id": "2021",
+                "title": "2021",
+                "count": 350
+            },
+            {
+                "id": "2020",
+                "title": "2020",
+                "count": 465
+            },
+            {
+                "id": "2019",
+                "title": "2019",
+                "count": 330
+            },
+            {
+                "id": "2018",
+                "title": "2018",
+                "count": 334
+            },
+            {
+                "id": "2017",
+                "title": "2017",
+                "count": 191
+            },
+            {
+                "id": "2016",
+                "title": "2016",
+                "count": 149
+            }
+        ],
+        "providers": [
+            {
+                "id": "rhtq",
+                "title": "Central Library, Islamic Azad University",
+                "count": 226
+            },
+            {
+                "id": "qjzc",
+                "title": "Deactivated repositories",
+                "count": 126
+            },
+            {
+                "id": "rads",
+                "title": "Russian Agency for Digital Standardization",
+                "count": 79
+            },
+            {
+                "id": "cqik",
+                "title": "Repositories moved to a different RA",
+                "count": 71
+            },
+            {
+                "id": "ivuw",
+                "title": "Fundação para a Ciência e Tecnologia",
+                "count": 71
+            },
+            {
+                "id": "sjkb",
+                "title": "MTAKIK bucket",
+                "count": 66
+            },
+            {
+                "id": "jbru",
+                "title": "French National Centre for Scientific Research",
+                "count": 64
+            },
+            {
+                "id": "awzy",
+                "title": "IKM Universität Tübingen",
+                "count": 62
+            },
+            {
+                "id": "vcob",
+                "title": "CNRS-Bucket",
+                "count": 50
+            },
+            {
+                "id": "cnrst",
+                "title": "Centre National pour la Recherche Scientifique et Technique (CNRST)",
+                "count": 41
+            }
+        ],
+        "clientTypes": [
+            {
+                "id": "repository",
+                "title": "Repository",
+                "count": 3418
+            },
+            {
+                "id": "periodical",
+                "title": "Periodical",
+                "count": 605
+            },
+            {
+                "id": "igsnCatalog",
+                "title": "IGSN ID Catalog",
+                "count": 37
+            },
+            {
+                "id": "raidRegistry",
+                "title": "RAiD Registry",
+                "count": 15
+            }
+        ],
+        "repositoryTypes": [
+            {
+                "id": "institutional",
+                "title": "Institutional",
+                "count": 656
+            },
+            {
+                "id": "disciplinary",
+                "title": "Disciplinary",
+                "count": 236
+            },
+            {
+                "id": "multidisciplinary",
+                "title": "Multidisciplinary",
+                "count": 133
+            },
+            {
+                "id": "project-related",
+                "title": "Project Related",
+                "count": 78
+            },
+            {
+                "id": "governmental",
+                "title": "Governmental",
+                "count": 58
+            },
+            {
+                "id": "other",
+                "title": "Other",
+                "count": 44
+            }
+        ],
+        "certificates": [
+            {
+                "id": "CoreTrustSeal",
+                "title": "Core Trust Seal",
+                "count": 30
+            },
+            {
+                "id": "RatSWD",
+                "title": "Rat Swd",
+                "count": 30
+            },
+            {
+                "id": "DINI",
+                "title": "Dini",
+                "count": 9
+            },
+            {
+                "id": "DSA",
+                "title": "Dsa",
+                "count": 6
+            },
+            {
+                "id": "WDS",
+                "title": "Wds",
+                "count": 6
+            },
+            {
+                "id": "CLARIN",
+                "title": "Clarin",
+                "count": 1
+            },
+            {
+                "id": "DIN 31644",
+                "title": "Din 31644",
+                "count": 1
+            }
+        ],
+        "software": [
+            {
+                "id": "open_journal_systems_ojs",
+                "title": "Open Journal Systems (OJS)",
+                "count": 186
+            },
+            {
+                "id": "other",
+                "title": "Other",
+                "count": 148
+            },
+            {
+                "id": "dspace",
+                "title": "DSpace",
+                "count": 117
+            },
+            {
+                "id": "dataverse",
+                "title": "Dataverse",
+                "count": 71
+            },
+            {
+                "id": "invenio",
+                "title": "Invenio",
+                "count": 36
+            },
+            {
+                "id": "opus",
+                "title": "OPUS",
+                "count": 26
+            },
+            {
+                "id": "ckan",
+                "title": "CKAN",
+                "count": 20
+            },
+            {
+                "id": "eprints",
+                "title": "EPrints",
+                "count": 20
+            },
+            {
+                "id": "samvera",
+                "title": "Samvera",
+                "count": 12
+            },
+            {
+                "id": "pure",
+                "title": "Pure",
+                "count": 10
+            }
+        ]
+    },
+    "links": {
+        "self": "https://sciconnect-test.b-cdn.net/s-index/datacite.json",
+        "next": "https://sciconnect-test.b-cdn.net/s-index/datacite2.json"
+    }
+}

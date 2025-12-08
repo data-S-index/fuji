@@ -13,6 +13,8 @@ import requests
 import yaml
 from fuji_server.helper.linked_vocab_helper import LinkedVocabHelper
 
+im
+
 
 class Preprocessor:
     # static elements belong to the class.
@@ -24,9 +26,9 @@ class Preprocessor:
     total_metrics = 0
     total_licenses = 0
     METRIC_YML_PATH = None
-    SPDX_URL = "https://raw.github.com/spdx/license-list-data/master/json/licenses.json"
-    DATACITE_API_REPO = "https://api.datacite.org/repositories"
-    RE3DATA_API = "https://re3data.org/api/beta/repositories"
+    SPDX_URL = "https://sciconnect-test.b-cdn.net/s-index/licenses.json"
+    DATACITE_API_REPO = "https://sciconnect-test.b-cdn.net/s-index/datacite.json"
+    RE3DATA_API = "https://sciconnect-test.b-cdn.net/s-index/repositories.xml"
     LOV_API = None
     LOD_CLOUDNET = None
     BIOPORTAL_API = None
@@ -37,7 +39,9 @@ class Preprocessor:
     all_licenses = []
     license_names = []
     metadata_standards = {}  # key=subject,value =[standards name]
-    metadata_standards_uris = {}  # some additional namespace uris and all uris from above as key
+    metadata_standards_uris = (
+        {}
+    )  # some additional namespace uris and all uris from above as key
     all_file_formats = {}
     science_file_formats = {}
     long_term_file_formats = {}
@@ -74,7 +78,9 @@ class Preprocessor:
     @classmethod
     def set_mime_types(cls):
         try:
-            mimes = requests.get("https://raw.githubusercontent.com/jshttp/mime-db/master/db.json").json()
+            mimes = requests.get(
+                "https://sciconnect-test.b-cdn.net/s-index/mimedb.json"
+            ).json()
             for mime_type, mime_data in mimes.items():
                 if mime_data.get("extensions"):
                     for ext in mime_data.get("extensions"):
@@ -82,7 +88,9 @@ class Preprocessor:
                         mimetypes.add_type(mime_type, "." + ext, strict=True)
             print("MIME TYPES: ", len(mimetypes.types_map))
         except Exception:
-            cls.logger.warning("Loading additional mime types failed, will continue with standard set")
+            cls.logger.warning(
+                "Loading additional mime types failed, will continue with standard set"
+            )
 
     @classmethod
     def set_max_content_size(cls, size):
@@ -97,9 +105,17 @@ class Preprocessor:
                     cls.remote_log_host = host
                     cls.remote_log_path = path
                 else:
-                    cls.logger.warning("Remote Logging not possible, URL response: " + str(request.status_code))
+                    cls.logger.warning(
+                        "Remote Logging not possible, URL response: "
+                        + str(request.status_code)
+                    )
             except Exception:
-                cls.logger.warning("Remote Logging not possible ,please correct : " + str(host) + " " + str(path))
+                cls.logger.warning(
+                    "Remote Logging not possible ,please correct : "
+                    + str(host)
+                    + " "
+                    + str(path)
+                )
 
     @classmethod
     def set_verify_pids(cls, verify):
@@ -238,7 +254,9 @@ class Preprocessor:
             print("updating re3data dois")
             p = {"query": "re3data_id:*"}
             try:
-                req = requests.get(cls.DATACITE_API_REPO, params=p, headers=cls.header, timeout=5)
+                req = requests.get(
+                    cls.DATACITE_API_REPO, params=p, headers=cls.header, timeout=5
+                )
                 raw = req.json()
                 for r in raw["data"]:
                     cls.re3repositories[r["id"]] = r["attributes"]["re3data"]
@@ -283,7 +301,9 @@ class Preprocessor:
                         resp = r.json()
                         data = resp["licenses"]
                         for d in data:
-                            d["name"] = d["name"].lower()  # convert license name to lowercase
+                            d["name"] = d[
+                                "name"
+                            ].lower()  # convert license name to lowercase
                         with open(path, "w") as f:
                             yaml.safe_dump(data, f)
                 except yaml.YAMLError as exc1:
@@ -494,7 +514,9 @@ class Preprocessor:
         if not cls.all_metrics_list:
             cls.retrieve_metrics_yaml(cls.METRIC_YML_PATH)
         for dictm in cls.all_metrics_list:
-            new_dict[dictm["metric_identifier"]] = {k: v for k, v in dictm.items() if k in wanted_fields}
+            new_dict[dictm["metric_identifier"]] = {
+                k: v for k, v in dictm.items() if k in wanted_fields
+            }
         return new_dict
 
     @classmethod
