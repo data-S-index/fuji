@@ -438,14 +438,18 @@ class Preprocessor:
 
     @classmethod
     def retrieve_doi_prefixes(cls):
+        ## modified by sanjay
         data = {}
         prf_path = cls.data_dir / "doi_prefixes.tsv"
-        with open(prf_path) as f:
-            for line in f:
-                key, value = line.strip().split("\t")
-                data[key] = value
-        if data:
-            cls.doi_prefixes = data
+        if prf_path.exists():
+            with open(prf_path) as f:
+                for line in f:
+                    key, value = line.strip().split("\t")
+                    data[key] = value
+            if data:
+                cls.doi_prefixes = data
+        else:
+            cls.doi_prefixes = {}
 
     @staticmethod
     def uri_validator(u):
