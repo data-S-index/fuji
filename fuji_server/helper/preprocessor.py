@@ -13,8 +13,6 @@ import requests
 import yaml
 from fuji_server.helper.linked_vocab_helper import LinkedVocabHelper
 
-im
-
 
 class Preprocessor:
     # static elements belong to the class.
