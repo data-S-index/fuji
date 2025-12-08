@@ -19,6 +19,9 @@ env:
 
 jobs:
   build-and-publish:
+    permissions:
+      contents: read
+      packages: write
     # Build and push image to GitHub Container Registry https://docs.docker.com/docker-hub/builds/
     runs-on: ubuntu-22.04
 
