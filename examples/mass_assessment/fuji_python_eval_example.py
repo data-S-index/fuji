@@ -17,6 +17,7 @@ import os
 
 from fuji_server.controllers.fair_object_controller import evaluate_fairness
 
+
 # Example: Evaluate a single object
 def evaluate_single_object():
     """Example of evaluating a single object."""
@@ -27,15 +28,15 @@ def evaluate_single_object():
         use_github=False,
         metric_version="metrics_v0.8",
     )
-    
+
     # The result is a FAIRResults object
     print(f"Assessment completed for: {result.request['object_identifier']}")
     print(f"Total metrics: {result.total_metrics}")
     print(f"FAIR score: {result.summary['score_percent']['FAIR']}%")
     print(f"Test ID: {result.test_id}")
-    
+
     # You can convert it to a dict for JSON serialization
-    result_dict = result.to_dict() if hasattr(result, 'to_dict') else result
+    result_dict = result.to_dict() if hasattr(result, "to_dict") else result
     return result
 
 
@@ -46,10 +47,10 @@ def evaluate_multiple_objects():
         "https://doi.org/10.5281/zenodo.8347772",
         "https://archive.materialscloud.org/record/2021.146",
     ]
-    
+
     results_folder = "./results/"
     os.makedirs(results_folder, exist_ok=True)
-    
+
     results = []
     for pid in pids:
         print(f"Evaluating: {pid}")
@@ -61,31 +62,43 @@ def evaluate_multiple_objects():
                 use_github=False,
             )
             results.append(result)
-            
+
             # Save individual result
             res_filename = f"{pid.split('/')[-1]}.json"
             res_filename_path = os.path.join(results_folder, res_filename)
-            
+
             # Convert to dict for JSON serialization
-            result_dict = result.to_dict() if hasattr(result, 'to_dict') else {
-                'test_id': result.test_id,
-                'request': result.request,
-                'summary': result.summary,
-                'total_metrics': result.total_metrics,
-                'metric_version': result.metric_version,
-                'software_version': result.software_version,
-                'start_timestamp': result.start_timestamp.isoformat() if hasattr(result.start_timestamp, 'isoformat') else str(result.start_timestamp),
-                'end_timestamp': result.end_timestamp.isoformat() if hasattr(result.end_timestamp, 'isoformat') else str(result.end_timestamp),
-                'resolved_url': result.resolved_url,
-            }
-            
+            result_dict = (
+                result.to_dict()
+                if hasattr(result, "to_dict")
+                else {
+                    "test_id": result.test_id,
+                    "request": result.request,
+                    "summary": result.summary,
+                    "total_metrics": result.total_metrics,
+                    "metric_version": result.metric_version,
+                    "software_version": result.software_version,
+                    "start_timestamp": (
+                        result.start_timestamp.isoformat()
+                        if hasattr(result.start_timestamp, "isoformat")
+                        else str(result.start_timestamp)
+                    ),
+                    "end_timestamp": (
+                        result.end_timestamp.isoformat()
+                        if hasattr(result.end_timestamp, "isoformat")
+                        else str(result.end_timestamp)
+                    ),
+                    "resolved_url": result.resolved_url,
+                }
+            )
+
             with open(res_filename_path, "w", encoding="utf-8") as fileo:
                 json.dump(result_dict, fileo, ensure_ascii=False, indent=2)
-            
+
             print(f"  Score: {result.summary['score_percent']['FAIR']}%")
         except Exception as e:
             print(f"  Error: {e}")
-    
+
     return results
 
 
@@ -119,8 +132,7 @@ if __name__ == "__main__":
     # Run a simple example
     print("Running single object evaluation...")
     evaluate_single_object()
-    
+
     # Uncomment to run batch evaluation
     # print("\nRunning batch evaluation...")
     # evaluate_multiple_objects()
-
