@@ -7,6 +7,7 @@ import mimetypes
 import time
 from pathlib import Path
 from urllib.parse import urlparse
+import os
 
 import requests
 
@@ -23,7 +24,12 @@ class Preprocessor:
     bool_string = {"true": True, "false": False}
     total_metrics = 0
     total_licenses = 0
-    METRIC_YML_PATH = None
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    ROOT_DIR = os.path.dirname(ROOT_DIR)
+    YAML_DIR = os.path.join(ROOT_DIR, "yaml")
+    # METRIC_YAML = config['SERVICE']['metrics_yaml']
+    # YAML_DIR = os.path.join(my_path, config['SERVICE']['yaml_directory'])
+    METRIC_YML_PATH = os.path.join(ROOT_DIR, YAML_DIR)
     SPDX_URL = "https://sciconnect-test.b-cdn.net/s-index/licenses.json"
     # DATACITE_API_REPO = "https://sciconnect-test.b-cdn.net/s-index/datacite.json"
     DATACITE_API_REPO = "https://api.datacite.org/repositories"

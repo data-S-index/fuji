@@ -6,6 +6,7 @@ import time
 import threading
 from datetime import datetime
 from typing import Optional, Tuple, List, Dict, Any
+import traceback
 
 import requests
 
@@ -36,7 +37,7 @@ def random_sleep(min_seconds: float = 30.0, max_seconds: float = 60.0) -> None:
         max_seconds: Maximum sleep duration
     """
     sleep_time = random.uniform(min_seconds, max_seconds)
-    time.sleep(sleep_time)
+    # time.sleep(sleep_time)
 
 
 # Global shutdown event for graceful thread termination
@@ -187,7 +188,7 @@ def score_job(
             # Call FUJI directly via Python function
             result = evaluate_fairness(
                 object_identifier=identifier,
-                test_debug=False,  # Disable debug for production
+                test_debug=True,  # Disable debug for production
                 use_datacite=True,
                 use_github=False,
                 metric_version="metrics_v0.8",
@@ -228,6 +229,7 @@ def score_job(
             return result_dict
 
         except Exception as e:
+            print(traceback.format_exc())
             print(f"  ⚠️  Error for job {job_id} (attempt {attempt + 1}): {str(e)}")
             if attempt < MAX_RETRIES - 1:
                 backoff_time = RETRY_DELAY * (attempt + 1)

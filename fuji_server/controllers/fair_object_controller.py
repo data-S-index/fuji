@@ -50,6 +50,7 @@ def evaluate_fairness(
     Returns:
         FAIRResults: The assessment results object
     """
+
     logger = Preprocessor.logger
     # updating re3data
     Preprocessor.retrieve_datacite_re3repos()
@@ -67,6 +68,7 @@ def evaluate_fairness(
         oaipmh_endpoint=oaipmh_endpoint,
         metric_version=metric_version,
     )
+
     # dataset level authentication
     if auth_token:
         ft.set_auth_token(auth_token, auth_token_type)

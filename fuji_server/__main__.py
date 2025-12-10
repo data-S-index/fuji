@@ -19,7 +19,9 @@ from fuji_server.helper.preprocessor import Preprocessor
 def main():
     logging.getLogger("connexion.operation").setLevel("INFO")
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    print("ROOT DIR: ", ROOT_DIR)
     YAML_DIR = config["SERVICE"]["yaml_directory"]
+    print("YAML DIR: ", YAML_DIR)
     # METRIC_YAML = config['SERVICE']['metrics_yaml']
     # YAML_DIR = os.path.join(my_path, config['SERVICE']['yaml_directory'])
     METRIC_YML_PATH = os.path.join(ROOT_DIR, YAML_DIR)
@@ -45,19 +47,35 @@ def main():
     preproc.retrieve_metadata_standards()
     # preproc.retrieve_linkedvocabs(lov_api=LOV_API, lodcloud_api=LOD_CLOUDNET, bioportal_api=BIOPORTAL_REST, bioportal_key=BIOPORTAL_APIKEY, isDebugMode=False)
     # preproc.retrieve_linkedvocabs(lov_api=LOV_API, lodcloud_api=LOD_CLOUDNET, isDebugMode=isDebug)
-    preproc.set_remote_log_info(config["SERVICE"].get("remote_log_host"), config["SERVICE"].get("remote_log_path"))
+    preproc.set_remote_log_info(
+        config["SERVICE"].get("remote_log_host"),
+        config["SERVICE"].get("remote_log_path"),
+    )
     preproc.set_max_content_size(config["SERVICE"]["max_content_size"])
 
     logger.info(f"Total SPDX licenses : {preproc.get_total_licenses()}")
-    logger.info(f"Total re3repositories found from datacite api : {len(preproc.getRE3repositories())}")
-    logger.info(f"Total subjects area of imported metadata standards : {len(preproc.metadata_standards)}")
+    logger.info(
+        f"Total re3repositories found from datacite api : {len(preproc.getRE3repositories())}"
+    )
+    logger.info(
+        f"Total subjects area of imported metadata standards : {len(preproc.metadata_standards)}"
+    )
     logger.info(f"Total LD vocabs imported : {len(preproc.getLinkedVocabs())}")
-    logger.info(f"Total default namespaces specified : {len(preproc.getDefaultNamespaces())}")
+    logger.info(
+        f"Total default namespaces specified : {len(preproc.getDefaultNamespaces())}"
+    )
 
     app = create_app(config)
-    Limiter(get_remote_address, app=app.app, default_limits=[str(config["SERVICE"]["rate_limit"])])
+    Limiter(
+        get_remote_address,
+        app=app.app,
+        default_limits=[str(config["SERVICE"]["rate_limit"])],
+    )
     # built in uvicorn ASGI
-    app.run(host=config["SERVICE"]["service_host"], port=int(config["SERVICE"]["service_port"]))
+    app.run(
+        host=config["SERVICE"]["service_host"],
+        port=int(config["SERVICE"]["service_port"]),
+    )
 
 
 if __name__ == "__main__":
@@ -65,7 +83,9 @@ if __name__ == "__main__":
     my_path = os.path.abspath(os.path.dirname(__file__))
     parser = argparse.ArgumentParser()
     # add a new command line option, call it '-c' and set its destination to 'config_file'
-    parser.add_argument("-c", "--config", required=True, help="Path to server.ini config file")
+    parser.add_argument(
+        "-c", "--config", required=True, help="Path to server.ini config file"
+    )
     args = parser.parse_args()
     config = configparser.ConfigParser()
     config.read(args.config)
