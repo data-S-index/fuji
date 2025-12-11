@@ -13,7 +13,7 @@ import requests
 from fuji_server.controllers.fair_object_controller import evaluate_fairness
 
 # Number of worker threads to run in parallel
-INSTANCE_COUNT = int(os.getenv("INSTANCE_COUNT", "1"))
+INSTANCE_COUNT = int(os.getenv("INSTANCE_COUNT", "30"))
 
 # Retry configuration
 MAX_RETRIES = 3
@@ -37,7 +37,7 @@ def random_sleep(min_seconds: float = 30.0, max_seconds: float = 60.0) -> None:
         max_seconds: Maximum sleep duration
     """
     sleep_time = random.uniform(min_seconds, max_seconds)
-    # time.sleep(sleep_time)
+    time.sleep(sleep_time)
 
 
 # Global shutdown event for graceful thread termination
@@ -305,15 +305,15 @@ def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
         print(f"  ... and {len(results) - 5} more results")
 
     try:
-        # response = requests.post(
-        #     RESULTS_API_URL,
-        #     json=payload,
-        #     headers={"Content-Type": "application/json"},
-        #     timeout=120.0,
-        # )
-        # print(f"  📥 Response status: {response.status_code}")
-        # print(f"  📄 Response text: {response.text[:200]}")
-        # response.raise_for_status()
+        response = requests.post(
+            RESULTS_API_URL,
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=120.0,
+        )
+        print(f"  📥 Response status: {response.status_code}")
+        print(f"  📄 Response text: {response.text[:200]}")
+        response.raise_for_status()
         print(f"  ✅ Successfully posted {len(results)} results")
         return True
     except requests.RequestException as e:

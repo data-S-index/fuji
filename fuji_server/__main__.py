@@ -19,13 +19,11 @@ from fuji_server.helper.preprocessor import Preprocessor
 def main():
     logging.getLogger("connexion.operation").setLevel("INFO")
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-    print("ROOT DIR: ", ROOT_DIR)
+
     YAML_DIR = config["SERVICE"]["yaml_directory"]
-    print("YAML DIR: ", YAML_DIR)
     # METRIC_YAML = config['SERVICE']['metrics_yaml']
     # YAML_DIR = os.path.join(my_path, config['SERVICE']['yaml_directory'])
     METRIC_YML_PATH = os.path.join(ROOT_DIR, YAML_DIR)
-    print("YAML PATH", METRIC_YML_PATH)
     """SPDX_URL = config['EXTERNAL']['spdx_license_github']
     DATACITE_API_REPO = config['EXTERNAL']['datacite_api_repo']
     RE3DATA_API = config['EXTERNAL']['re3data_api']
