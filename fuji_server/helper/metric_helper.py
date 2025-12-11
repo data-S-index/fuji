@@ -26,7 +26,9 @@ class MetricHelper:
             self.logger = logger
         else:
             self.logger = logging.getLogger()
-        ym = re.match("(metrics_v)?([0-9]+\.[0-9]+)(_[a-z]+)?(\.yaml)?", metric_input_file_name)
+        ym = re.match(
+            "(metrics_v)?([0-9]+\.[0-9]+)(_[a-z]+)?(\.yaml)?", metric_input_file_name
+        )
         if ym:
             # print(ym.groups())
             metric_file_name = ""
@@ -43,11 +45,16 @@ class MetricHelper:
 
             metric_yml_path = Preprocessor.METRIC_YML_PATH
 
+            print("METRIC YML PATH: ", metric_yml_path)
+            print("METRIC FILE NAME: ", metric_file_name)
+
             print("METRIC VERSION", self.metric_version)
             print("LOADING METRICS  ", metric_file_name, metric_yml_path)
             specification = {}
             try:
-                stream = open(os.path.join(metric_yml_path, metric_file_name), encoding="utf8")
+                stream = open(
+                    os.path.join(metric_yml_path, metric_file_name), encoding="utf8"
+                )
                 specification = yaml.load(stream, Loader=yaml.FullLoader)
             except FileNotFoundError as e:
                 print("ERROR: YAML LOADING ERROR -NOT FOUND")
@@ -85,24 +92,41 @@ class MetricHelper:
                 tm = re.search(self.metric_regex, str(dictm.get("metric_identifier")))
                 if tm:
                     agnostic_identifier = tm[0]
-                    new_dict[agnostic_identifier] = {k: v for k, v in dictm.items() if k in wanted_fields}
-                    new_dict[agnostic_identifier]["agnostic_identifier"] = agnostic_identifier
-                    new_dict[agnostic_identifier]["metric_identifier"] = dictm.get("metric_identifier")
+                    new_dict[agnostic_identifier] = {
+                        k: v for k, v in dictm.items() if k in wanted_fields
+                    }
+                    new_dict[agnostic_identifier][
+                        "agnostic_identifier"
+                    ] = agnostic_identifier
+                    new_dict[agnostic_identifier]["metric_identifier"] = dictm.get(
+                        "metric_identifier"
+                    )
 
                     if isinstance(dictm.get("metric_tests"), list):
                         for dictt in dictm.get("metric_tests"):
-                            ttm = re.search(self.metric_test_regex, str(dictt.get("metric_test_identifier")))
+                            ttm = re.search(
+                                self.metric_test_regex,
+                                str(dictt.get("metric_test_identifier")),
+                            )
                             if ttm:
                                 agnostic_test_identifier = ttm[0]
-                                dictt["agnostic_test_identifier"] = agnostic_test_identifier
+                                dictt["agnostic_test_identifier"] = (
+                                    agnostic_test_identifier
+                                )
                             else:
                                 self.logger.error(
-                                    "Invalid YAML defined Metric Test: " + str(dictt.get("metric_test_identifier"))
+                                    "Invalid YAML defined Metric Test: "
+                                    + str(dictt.get("metric_test_identifier"))
                                 )
                 else:
-                    self.logger.error("Invalid YAML defined Metric: " + str(dictm.get("metric_identifier")))
+                    self.logger.error(
+                        "Invalid YAML defined Metric: "
+                        + str(dictm.get("metric_identifier"))
+                    )
         else:
-            self.logger.error("No YAML defined Metric seems to exist: metric yaml could be malformed")
+            self.logger.error(
+                "No YAML defined Metric seems to exist: metric yaml could be malformed"
+            )
         return new_dict
 
     def get_metric_version(self):
