@@ -4,6 +4,8 @@ import os
 import random
 import time
 import threading
+import argparse
+import signal
 from datetime import datetime
 from typing import Optional, Tuple, List, Dict, Any
 import traceback
@@ -11,9 +13,6 @@ import traceback
 import requests
 
 from fuji_server.controllers.fair_object_controller import evaluate_fairness
-
-# Number of worker threads to run in parallel
-INSTANCE_COUNT = int(os.getenv("INSTANCE_COUNT", "30"))
 
 # Retry configuration
 MAX_RETRIES = 3
@@ -31,17 +30,32 @@ RESULTS_API_URL = f"{DOMAIN}/api/fuji/jobs/results"
 def random_sleep(min_seconds: float = 30.0, max_seconds: float = 60.0) -> None:
     """
     Sleep for a random duration between min_seconds and max_seconds.
+    Checks for shutdown event periodically during sleep.
 
     Args:
         min_seconds: Minimum sleep duration
         max_seconds: Maximum sleep duration
     """
     sleep_time = random.uniform(min_seconds, max_seconds)
-    time.sleep(sleep_time)
+    # Sleep in small chunks to check for shutdown
+    chunk_size = 1.0  # Check every second
+    elapsed = 0.0
+    while elapsed < sleep_time and not shutdown_event.is_set():
+        remaining = min(chunk_size, sleep_time - elapsed)
+        if shutdown_event.wait(timeout=remaining):
+            break
+        elapsed += remaining
 
 
 # Global shutdown event for graceful thread termination
 shutdown_event = threading.Event()
+
+
+def signal_handler(signum, frame):
+    """Handle shutdown signals (SIGINT, SIGTERM)."""
+    if not shutdown_event.is_set():
+        print("\n\n⚠️  Shutdown signal received. Shutting down threads...")
+        shutdown_event.set()
 
 
 def get_fuji_score_and_date(
@@ -119,6 +133,10 @@ def fetch_jobs_from_api() -> List[Dict[str, Any]]:
     """
     all_jobs = []
 
+    # Check for shutdown before starting
+    if shutdown_event.is_set():
+        return all_jobs
+
     # Fetch priority jobs first
     print(f"  📥 Fetching priority jobs from {PRIORITY_JOBS_API_URL}...")
     try:
@@ -131,8 +149,15 @@ def fetch_jobs_from_api() -> List[Dict[str, Any]]:
         if isinstance(priority_jobs, list):
             all_jobs.extend(priority_jobs)
             print(f"  📋 Added {len(priority_jobs)} priority jobs")
+    except KeyboardInterrupt:
+        # Re-raise to allow proper shutdown handling
+        raise
     except Exception as e:
         print(f"  ⚠️  Error fetching priority jobs: {e}")
+
+    # Check for shutdown before fetching regular jobs
+    if shutdown_event.is_set():
+        return all_jobs
 
     # Fetch regular jobs
     print(f"  📥 Fetching regular jobs from {JOBS_API_URL}...")
@@ -146,6 +171,9 @@ def fetch_jobs_from_api() -> List[Dict[str, Any]]:
         if isinstance(regular_jobs, list):
             all_jobs.extend(regular_jobs)
             print(f"  📋 Added {len(regular_jobs)} regular jobs")
+    except KeyboardInterrupt:
+        # Re-raise to allow proper shutdown handling
+        raise
     except Exception as e:
         print(f"  ⚠️  Error fetching regular jobs: {e}")
 
@@ -179,10 +207,20 @@ def score_job(
 
     # Retry logic for evaluation calls
     for attempt in range(MAX_RETRIES):
+        # Check for shutdown before each attempt
+        if shutdown_event.is_set():
+            print(f"  ⚠️  Shutdown requested, aborting job {job_id}")
+            return None
+
         try:
             print(f"  🔄 Attempt {attempt + 1}/{MAX_RETRIES} for job {job_id}")
             # Sleep before making FUJI evaluation call
             random_sleep()
+
+            # Check for shutdown after sleep
+            if shutdown_event.is_set():
+                print(f"  ⚠️  Shutdown requested, aborting job {job_id}")
+                return None
 
             print(f"  📤 Evaluating identifier: {identifier}")
             # Call FUJI directly via Python function
@@ -296,6 +334,11 @@ def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
         print("  ℹ️  No results to post")
         return True
 
+    # Check for shutdown before posting
+    if shutdown_event.is_set():
+        print("  ⚠️  Shutdown requested, skipping result posting")
+        return False
+
     payload = {"results": results}
     print(f"  📤 Posting {len(results)} results to {RESULTS_API_URL}")
     print(
@@ -316,6 +359,9 @@ def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
         response.raise_for_status()
         print(f"  ✅ Successfully posted {len(results)} results")
         return True
+    except KeyboardInterrupt:
+        # Re-raise to allow proper shutdown handling
+        raise
     except requests.RequestException as e:
         print(f"  ⚠️  Request error posting results: {str(e)}")
         if hasattr(e, "response") and e.response is not None:
@@ -337,9 +383,17 @@ def worker_thread(thread_id: int) -> None:
 
     while not shutdown_event.is_set():
         try:
+            # Check for shutdown before starting
+            if shutdown_event.is_set():
+                break
+
             # Fetch jobs from API
             print(f"🧵 Thread {thread_id}: 📥 Fetching jobs...")
             jobs = fetch_jobs_from_api()
+
+            # Check for shutdown after fetching
+            if shutdown_event.is_set():
+                break
 
             if not jobs:
                 print(f"🧵 Thread {thread_id}: ✅ No jobs found, waiting...")
@@ -350,6 +404,11 @@ def worker_thread(thread_id: int) -> None:
 
             # Sleep before processing jobs
             random_sleep()
+
+            # Check for shutdown after sleep
+            if shutdown_event.is_set():
+                print(f"🧵 Thread {thread_id}: ⚠️  Shutdown requested, stopping...")
+                break
 
             print(f"🧵 Thread {thread_id}: 📊 Processing {len(jobs):,} jobs...")
 
@@ -404,6 +463,11 @@ def worker_thread(thread_id: int) -> None:
             # Sleep before fetching next batch of jobs
             random_sleep()
 
+            # Check for shutdown after sleep
+            if shutdown_event.is_set():
+                print(f"🧵 Thread {thread_id}: ⚠️  Shutdown requested, stopping...")
+                break
+
         except Exception as e:
             if shutdown_event.is_set():
                 print(f"🧵 Thread {thread_id}: ⚠️  Shutdown requested")
@@ -418,10 +482,15 @@ def worker_thread(thread_id: int) -> None:
     print(f"🧵 Thread {thread_id}: 🛑 Stopped")
 
 
-def main() -> None:
-    """Main function to create and start worker threads that run continuously."""
+def main(instance_count: int) -> None:
+    """
+    Main function to create and start worker threads that run continuously.
+
+    Args:
+        instance_count: Number of worker threads to run in parallel
+    """
     print("🚀 Starting Fuji score processing...")
-    print(f"🧵 Creating {INSTANCE_COUNT} worker thread(s)...")
+    print(f"🧵 Creating {instance_count} worker thread(s)...")
     print(f"🌐 Domain: {DOMAIN}")
     print(f"📥 Jobs API: {JOBS_API_URL}")
     print(f"📥 Priority Jobs API: {PRIORITY_JOBS_API_URL}")
@@ -432,10 +501,10 @@ def main() -> None:
     threads = []
 
     # Create and start threads
-    for i in range(INSTANCE_COUNT):
+    for i in range(instance_count):
         print(f"🔧 Creating thread {i + 1}")
         thread = threading.Thread(
-            target=worker_thread, args=(i + 1,), name=f"Worker-{i + 1}"
+            target=worker_thread, args=(i + 1,), name=f"Worker-{i + 1}", daemon=False
         )
         threads.append(thread)
         thread.start()
@@ -443,32 +512,76 @@ def main() -> None:
 
     # Wait for all threads to complete (they run indefinitely until interrupted)
     print(f"\n🔄 All {len(threads)} threads started. Waiting for completion...\n")
+
+    # Poll for shutdown instead of blocking indefinitely
     try:
-        for thread in threads:
-            print(f"⏳ Waiting for {thread.name}...")
-            thread.join()
+        while not shutdown_event.is_set():
+            # Check if all threads are still alive
+            alive_threads = [t for t in threads if t.is_alive()]
+            if not alive_threads:
+                break
+
+            # Wait a short time and check again
+            shutdown_event.wait(timeout=1.0)
+
+            # If shutdown was requested, break immediately
+            if shutdown_event.is_set():
+                break
     except KeyboardInterrupt:
         print("\n\n⚠️  Keyboard interrupt detected. Shutting down threads...")
-        shutdown_event.set()  # Signal all threads to stop
+        shutdown_event.set()
+
+    # Now wait for threads to finish gracefully
+    if shutdown_event.is_set():
         print("🛑 Shutdown signal sent to all threads")
-        # Wait for threads to finish current iteration
+        # Wait for threads to finish current iteration with timeout
         for thread in threads:
-            print(
-                f"⏳ Waiting for {thread.name} to finish gracefully (timeout: 10s)..."
-            )
-            thread.join(timeout=10)  # Give threads time to finish gracefully
             if thread.is_alive():
-                print(f"⚠️  {thread.name} did not finish within timeout")
+                print(
+                    f"⏳ Waiting for {thread.name} to finish gracefully (timeout: 30s)..."
+                )
+                thread.join(timeout=30)  # Give threads more time to finish gracefully
+                if thread.is_alive():
+                    print(f"⚠️  {thread.name} did not finish within timeout")
 
     print("\n✅ All threads stopped!")
 
 
 if __name__ == "__main__":
+    # Register signal handlers early, before any threads are created
+    signal.signal(signal.SIGINT, signal_handler)
+    # SIGTERM is not available on Windows
+    if hasattr(signal, "SIGTERM"):
+        signal.signal(signal.SIGTERM, signal_handler)
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "Process Fuji scores by fetching jobs from API "
+            "and calling FUJI directly via Python."
+        )
+    )
+    parser.add_argument(
+        "--threads",
+        type=int,
+        default=int(os.getenv("THREADS", "1")),
+        help=(
+            "Number of worker threads to run in parallel "
+            "(default: 1, or THREADS env var)"
+        ),
+    )
+
+    args = parser.parse_args()
+
+    INSTANCE_COUNT = args.threads
+    print(f"🚀 Starting Fuji score processing with {INSTANCE_COUNT} threads...")
+
     try:
-        main()
+        main(INSTANCE_COUNT)
     except KeyboardInterrupt:
         print("\n\n⚠️  Process interrupted by user")
+        shutdown_event.set()  # Ensure shutdown is set
         exit(1)
     except Exception as e:
         print(f"\n❌ Fatal error: {e}")
+        shutdown_event.set()  # Ensure shutdown is set on error
         exit(1)
