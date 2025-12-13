@@ -1,5 +1,5 @@
-# Install the environment
-apt install python3.12-venv
+sudo apt update
+sudo apt install python3.12-venv tmux
 
 # Create a new environment
 python3 -m venv venv
