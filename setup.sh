@@ -1,0 +1,9 @@
+# Create a new environment
+python3 -m venv venv
+
+# Activate the environment
+source venv/bin/activate
+
+# Install the dependencies
+pip install -r requirements.txt
+
