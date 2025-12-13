@@ -2,7 +2,7 @@ tmux new -s main
 
 source venv/bin/activate
 
-python3 fill-database-fuji.py --threads 75
+python3 fill-database-fuji.py --threads 90
 
 tmuxt list-sessions
 tmux ls
