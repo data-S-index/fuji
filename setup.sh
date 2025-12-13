@@ -1,3 +1,6 @@
+# Install the environment
+apt install python3.12-venv
+
 # Create a new environment
 python3 -m venv venv
 
