@@ -10,3 +10,5 @@ source venv/bin/activate
 # Install the dependencies
 pip install -r requirements.txt
 
+tmux new -s main
+
