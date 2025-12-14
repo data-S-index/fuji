@@ -252,6 +252,7 @@ class Preprocessor:
                 isDebugMode = False
         except:
             pass
+        isDebugMode = True
         if isDebugMode:
             with open(re3dict_path) as f:
                 cls.re3repositories = yaml.safe_load(f)
