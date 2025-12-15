@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-
+import random
 import requests
 
 from fuji_server.helper.catalogue_helper import MetaDataCatalogue
@@ -26,7 +26,7 @@ class MetaDataCatalogueDataCite(MetaDataCatalogue):
 
     islisted = False
     # apiURI = "https://api.datacite.org/dois"
-    apiURI = "https://scholardata.io/api/fuji/dois"
+    apiURIs = ["https://api.datacite.org/dois", "https://scholardata.io/api/fuji/dois"]
 
     def __init__(self, logger: logging.Logger | None = None):
         """
@@ -51,8 +51,10 @@ class MetaDataCatalogueDataCite(MetaDataCatalogue):
             session response
         """
         response = None
+        # pick a random apiURI from the list
+        apiURI = random.choice(self.apiURIs)
         try:
-            res = requests.get(self.apiURI + "/" + pid, timeout=5)
+            res = requests.get(apiURI + "/" + pid, timeout=5)
             self.logger.info("FsF-F4-01M : Querying DataCite API for -:" + str(pid))
             if res.status_code == 200:
                 self.islisted = True
