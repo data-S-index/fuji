@@ -32,7 +32,8 @@ class Preprocessor:
     METRIC_YML_PATH = os.path.join(ROOT_DIR, YAML_DIR)
     SPDX_URL = "https://sciconnect-test.b-cdn.net/s-index/licenses.json"
     # DATACITE_API_REPO = "https://sciconnect-test.b-cdn.net/s-index/datacite.json"
-    DATACITE_API_REPO = "https://api.datacite.org/repositories"
+    # DATACITE_API_REPO = "https://api.datacite.org/repositories"
+    DATACITE_API_REPO = "https://sciconnect-test.b-cdn.net/s-index/doi_repos.json"
     RE3DATA_API = "https://sciconnect-test.b-cdn.net/s-index/repositories.xml"
     LOV_API = None
     LOD_CLOUDNET = None
