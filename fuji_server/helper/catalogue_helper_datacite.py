@@ -25,6 +25,7 @@ class MetaDataCatalogueDataCite(MetaDataCatalogue):
     """
 
     islisted = False
+    # apiURI = "https://api.datacite.org/dois"
     apiURI = "https://scholardata.io/api/fuji/dois"
 
     def __init__(self, logger: logging.Logger | None = None):
