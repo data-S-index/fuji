@@ -19,7 +19,11 @@ from rdflib.namespace import (
     SDO,  # schema.org
 )
 
-from fuji_server.helper.metadata_collector import MetaDataCollector, MetadataFormats, MetadataSources
+from fuji_server.helper.metadata_collector import (
+    MetaDataCollector,
+    MetadataFormats,
+    MetadataSources,
+)
 from fuji_server.helper.metadata_mapper import Mapper
 from fuji_server.helper.preprocessor import Preprocessor
 from fuji_server.helper.request_helper import AcceptTypes, RequestHelper
@@ -64,7 +68,14 @@ class MetaDataCollectorRdf(MetaDataCollector):
     SCHEMA_ORG_CONTEXT = Preprocessor.get_schema_org_context()
     SCHEMA_ORG_CREATIVEWORKS = Preprocessor.get_schema_org_creativeworks()
 
-    def __init__(self, loggerinst, target_url=None, source=None, json_ld_content=None, pref_mime_type=None):
+    def __init__(
+        self,
+        loggerinst,
+        target_url=None,
+        source=None,
+        json_ld_content=None,
+        pref_mime_type=None,
+    ):
         """
         Parameters
         ----------
@@ -83,7 +94,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
         self.resolved_url = target_url
         self.content_type = None
         self.source_name = source
-        self.main_entity_format = str(RDF)  # the main enties format e.g. dcat:Dataset => DCAT etc..
+        self.main_entity_format = str(
+            RDF
+        )  # the main enties format e.g. dcat:Dataset => DCAT etc..
         self.metadata_format = MetadataFormats.RDF
         if self.source_name == MetadataSources.RDFA_EMBEDDED:
             self.metadata_format = MetadataFormats.RDFA
@@ -140,7 +153,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 else:
                     namespacedict[str(namespace)] = 1
                 namespaces[prefix] = namespace
-            sortedns = sorted(namespacedict, key=lambda x: namespacedict[x], reverse=True)
+            sortedns = sorted(
+                namespacedict, key=lambda x: namespacedict[x], reverse=True
+            )
             if sortedns:
                 self.namespaces.extend(sortedns)
             self.namespaces = list(set(self.namespaces))
@@ -155,23 +170,40 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 rdflib.term.URIRef("http://www.w3.org/2004/02/skos/core#"),
                 rdflib.term.URIRef("http://www.w3.org/2002/07/owl#"),
             ]
-            if isinstance(rdf_response_graph, rdflib.graph.Graph) or isinstance(rdflib.graph.ConjunctiveGraph):
-                self.logger.info("FsF-F2-01M : Found RDF Graph which was sucessfully parsed")
-                self.logger.info("FsF-F2-01M : Trying to identify namespaces in RDF Graph")
+            if isinstance(rdf_response_graph, rdflib.graph.Graph) or isinstance(
+                rdflib.graph.ConjunctiveGraph
+            ):
+                self.logger.info(
+                    "FsF-F2-01M : Found RDF Graph which was sucessfully parsed"
+                )
+                self.logger.info(
+                    "FsF-F2-01M : Trying to identify namespaces in RDF Graph"
+                )
                 graph_namespaces = self.set_namespaces(rdf_response_graph)
                 # self.getNamespacesfromIRIs(graph_text)
                 schema_metadata, dcat_metadata, skos_metadata = {}, {}, {}
-                if rdflib.term.URIRef("http://www.w3.org/ns/dcat#") in graph_namespaces.values():
-                    self.logger.info("FsF-F2-01M : RDF Graph seems to contain DCAT metadata elements")
+                if (
+                    rdflib.term.URIRef("http://www.w3.org/ns/dcat#")
+                    in graph_namespaces.values()
+                ):
+                    self.logger.info(
+                        "FsF-F2-01M : RDF Graph seems to contain DCAT metadata elements"
+                    )
                     dcat_metadata = self.get_dcat_metadata(rdf_response_graph)
                 if (
-                    rdflib.term.URIRef("http://schema.org/") in graph_namespaces.values()
-                    or rdflib.term.URIRef("https://schema.org/") in graph_namespaces.values()
+                    rdflib.term.URIRef("http://schema.org/")
+                    in graph_namespaces.values()
+                    or rdflib.term.URIRef("https://schema.org/")
+                    in graph_namespaces.values()
                 ):
-                    self.logger.info("FsF-F2-01M : RDF Graph seems to contain schema.org metadata elements")
+                    self.logger.info(
+                        "FsF-F2-01M : RDF Graph seems to contain schema.org metadata elements"
+                    )
                     schema_metadata = self.get_schemaorg_metadata(rdf_response_graph)
                 if bool(set(ontology_indicator) & set(graph_namespaces.values())):
-                    self.logger.info("FsF-F2-01M : RDF Graph seems to contain SKOS/OWL metadata elements")
+                    self.logger.info(
+                        "FsF-F2-01M : RDF Graph seems to contain SKOS/OWL metadata elements"
+                    )
                     skos_metadata = self.get_ontology_metadata(rdf_response_graph)
                 # merging metadata dicts
                 try:
@@ -189,7 +221,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
                     )
                     rdf_metadata = self.get_sparqled_metadata(rdf_response_graph)
             else:
-                self.logger.info(f"FsF-F2-01M : Expected RDF Graph but received -: {self.content_type}")
+                self.logger.info(
+                    f"FsF-F2-01M : Expected RDF Graph but received -: {self.content_type}"
+                )
         return rdf_metadata
 
     def parse_metadata(self):
@@ -219,11 +253,15 @@ class MetaDataCollectorRdf(MetaDataCollector):
             self.metadata_format = neg_format
             if requestHelper.checked_content_hash:
                 if (
-                    requestHelper.checked_content.get(requestHelper.checked_content_hash).get("checked")
+                    requestHelper.checked_content.get(
+                        requestHelper.checked_content_hash
+                    ).get("checked")
                     and "xml" in requestHelper.content_type
                 ):
                     requestHelper.response_content = None
-                    self.logger.info("FsF-F2-01M : Ignoring RDF since content already has been parsed as XML")
+                    self.logger.info(
+                        "FsF-F2-01M : Ignoring RDF since content already has been parsed as XML"
+                    )
             if requestHelper.response_content is not None:
                 self.content_type = requestHelper.content_type
                 self.resolved_url = requestHelper.redirect_url
@@ -233,7 +271,11 @@ class MetaDataCollectorRdf(MetaDataCollector):
         if self.content_type is not None:
             self.content_type = self.content_type.split(";", 1)[0]
             # handle JSON-LD
-            json_types = ["application/ld+json", "application/json", "application/vnd.schemaorg.ld+json"]
+            json_types = [
+                "application/ld+json",
+                "application/json",
+                "application/vnd.schemaorg.ld+json",
+            ]
             if self.content_type in json_types or self.pref_mime_type in json_types:
                 if self.target_url:
                     jsonld_source_url = self.resolved_url
@@ -249,7 +291,10 @@ class MetaDataCollectorRdf(MetaDataCollector):
                     self.source_name = MetadataSources.SCHEMAORG_NEGOTIATED
                     self.metadata_format = MetadataFormats.JSONLD
                 if rdf_response:
-                    self.logger.info("FsF-F2-01M : Try to parse RDF (JSON-LD) from -: %s" % (jsonld_source_url))
+                    self.logger.info(
+                        "FsF-F2-01M : Try to parse RDF (JSON-LD) from -: %s"
+                        % (jsonld_source_url)
+                    )
                     if isinstance(rdf_response, bytes):
                         try:
                             rdf_response = rdf_response.decode("utf-8")
@@ -267,7 +312,10 @@ class MetaDataCollectorRdf(MetaDataCollector):
                             print("RDF Collector Error (JSON DUMPS): ", e)
                             pass
                     # try to make graph from JSON-LD string
-                    if isinstance(rdf_response, str) and rdf_response not in ["null", "None"]:
+                    if isinstance(rdf_response, str) and rdf_response not in [
+                        "null",
+                        "None",
+                    ]:
                         # url escape malformed (spaces) URIs
                         try:
                             suris = re.findall('"http[s]?:\/\/(.*?)"', rdf_response)
@@ -281,7 +329,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
                         try:
                             rdf_response = str(rdf_response).encode("utf-8")
                         except:
-                            self.logger.info("FsF-F2-01M : UTF-8 string conversion of JSON-LD failed")
+                            self.logger.info(
+                                "FsF-F2-01M : UTF-8 string conversion of JSON-LD failed"
+                            )
                             pass
                         self.logger.info(
                             "FsF-F2-01M : Try to parse JSON-LD using RDFLib retrieved as string from -: %s"
@@ -301,26 +351,38 @@ class MetaDataCollectorRdf(MetaDataCollector):
                                             elif isinstance(j_ctx, dict):
                                                 self.namespaces.extend(j_ctx.values())
                                     elif isinstance(json_.get("@context"), str):
-                                        self.namespaces.append(str(json_.get("@context")))
+                                        self.namespaces.append(
+                                            str(json_.get("@context"))
+                                        )
                                     # pre check for invalid reverse
                                     if isinstance(json_.get("@reverse"), list):
                                         json_valid = False
-                                        self.logger.warning("FsF-F2-01M : JSON-LD contains invalid @reverse properties")
+                                        self.logger.warning(
+                                            "FsF-F2-01M : JSON-LD contains invalid @reverse properties"
+                                        )
                                 json_valid = True
                             except Exception:
-                                self.logger.warning("FsF-F2-01M : Given JSON-LD seems to be invalid JSON")
+                                self.logger.warning(
+                                    "FsF-F2-01M : Given JSON-LD seems to be invalid JSON"
+                                )
                             if json_valid:
-                                jsonldgraph = rdflib.ConjunctiveGraph(identifier=self.resolved_url)
+                                jsonldgraph = rdflib.ConjunctiveGraph(
+                                    identifier=self.resolved_url
+                                )
 
                                 rdf_response_graph = jsonldgraph.parse(
-                                    data=rdf_response, format="json-ld", publicID=self.resolved_url
+                                    data=rdf_response,
+                                    format="json-ld",
+                                    publicID=self.resolved_url,
                                 )
 
                                 # rdf_response_graph = jsonldgraph
                                 self.setLinkedNamespaces(self.getAllURIS(jsonldgraph))
 
                         except Exception as e:
-                            self.logger.info(f"FsF-F2-01M : Parsing error (RDFLib), failed to extract JSON-LD -: {e}")
+                            self.logger.info(
+                                f"FsF-F2-01M : Parsing error (RDFLib), failed to extract JSON-LD -: {e}"
+                            )
             elif self.accept_type == AcceptTypes.rdf:
                 # parse all other RDF formats (non JSON-LD schema.org)
                 # parseformat = re.search(r'[\/+]([a-z0-9]+)$', str(requestHelper.content_type))
@@ -333,7 +395,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 if self.content_type in format_dict:
                     parseformat = (None, format_dict[self.content_type])
                 else:
-                    parseformat = re.search(r"[\/+]([a-z0-9]+)$", str(self.content_type))
+                    parseformat = re.search(
+                        r"[\/+]([a-z0-9]+)$", str(self.content_type)
+                    )
                 if parseformat:
                     parse_format = parseformat[1]
                     if parse_format == "rdfa":
@@ -351,22 +415,30 @@ class MetaDataCollectorRdf(MetaDataCollector):
                         "hext",
                     ]:
                         parse_format = "turtle"
-                    if "html" not in str(parse_format) and "zip" not in str(parse_format):
+                    if "html" not in str(parse_format) and "zip" not in str(
+                        parse_format
+                    ):
                         RDFparsed = False
-                        self.logger.info(f"FsF-F2-01M : Try to parse RDF from -: {self.target_url} as {parse_format}")
+                        self.logger.info(
+                            f"FsF-F2-01M : Try to parse RDF from -: {self.target_url} as {parse_format}"
+                        )
                         badline = None
                         while not RDFparsed:
                             try:
                                 graph = rdflib.Graph(identifier=self.resolved_url)
                                 graph.parse(data=rdf_response, format=parse_format)
                                 rdf_response_graph = graph
-                                self.setLinkedNamespaces(self.getAllURIS(rdf_response_graph))
+                                self.setLinkedNamespaces(
+                                    self.getAllURIS(rdf_response_graph)
+                                )
                                 RDFparsed = True
                             except Exception as e:
                                 # <unknown>:74964:92: unclosed token
                                 errorlinematch = re.search(r"\sline\s([0-9]+)", str(e))
                                 if not errorlinematch:
-                                    errorlinematch = re.search(r"<unknown>:([0-9]+)", str(e))
+                                    errorlinematch = re.search(
+                                        r"<unknown>:([0-9]+)", str(e)
+                                    )
                                 if errorlinematch and parseformat[1] != "xml":
                                     if int(errorlinematch[1]) + 1 != badline:
                                         badline = int(errorlinematch[1])
@@ -375,8 +447,14 @@ class MetaDataCollectorRdf(MetaDataCollector):
                                             % str(badline)
                                         )
                                         splitRDF = rdf_response.splitlines()
-                                        if len(splitRDF) >= 1 and badline <= len(splitRDF) and badline > 1:
-                                            rdf_response = b"\n".join(splitRDF[: badline - 1])
+                                        if (
+                                            len(splitRDF) >= 1
+                                            and badline <= len(splitRDF)
+                                            and badline > 1
+                                        ):
+                                            rdf_response = b"\n".join(
+                                                splitRDF[: badline - 1]
+                                            )
                                         else:
                                             RDFparsed = True  # end reached
                                     else:
@@ -386,7 +464,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
                                 if not RDFparsed:
                                     continue
                                 else:
-                                    self.logger.warning(f"FsF-F2-01M : Failed to parse RDF -: {self.target_url} {e!s}")
+                                    self.logger.warning(
+                                        f"FsF-F2-01M : Failed to parse RDF -: {self.target_url} {e!s}"
+                                    )
                     else:
                         self.logger.info(
                             "FsF-F2-01M : Seems to be HTML not RDF, therefore skipped parsing RDF from -: %s"
@@ -419,7 +499,10 @@ class MetaDataCollectorRdf(MetaDataCollector):
 
         try:
             if len(g) >= 1:
-                self.logger.info("FsF-F2-01M : Trying to query generic SPARQL on RDF, found triples: -:" + str(len(g)))
+                self.logger.info(
+                    "FsF-F2-01M : Trying to query generic SPARQL on RDF, found triples: -:"
+                    + str(len(g))
+                )
                 r = g.query(Mapper.GENERIC_SPARQL.value)
                 for row in r:
                     for row_property, row_value in row.asdict().items():
@@ -441,7 +524,10 @@ class MetaDataCollectorRdf(MetaDataCollector):
                                 if not meta.get("related_resources"):
                                     meta["related_resources"] = []
                                 meta["related_resources"].append(
-                                    {"related_resource": str(row_value), "relation_type": row_property}
+                                    {
+                                        "related_resource": str(row_value),
+                                        "relation_type": row_property,
+                                    }
                                 )
                             else:
                                 if row_value:
@@ -480,7 +566,10 @@ class MetaDataCollectorRdf(MetaDataCollector):
         elif meta.get("object_type"):
             # Ignore non CreativeWork schema.org types' metadata
             if "schema.org" in meta["object_type"]:
-                if meta["object_type"].split("/")[-1].lower() not in self.SCHEMA_ORG_CREATIVEWORKS:
+                if (
+                    meta["object_type"].split("/")[-1].lower()
+                    not in self.SCHEMA_ORG_CREATIVEWORKS
+                ):
                     self.logger.info(
                         "FsF-F2-01M : Ignoring SPARQLed metadata: seems to be non CreativeWork schema.org type: "
                         + str(meta["object_type"])
@@ -532,7 +621,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 + list(g.objects(item, SMA.url))
                 + list(g.objects(item, SDO.url))
             ):
-                idvalue = g.value(identifier, SDO.value) or g.value(identifier, SMA.value)
+                idvalue = g.value(identifier, SDO.value) or g.value(
+                    identifier, SMA.value
+                )
                 if idvalue:
                     identifier = idvalue
                 meta["object_identifier"].append(str(identifier))
@@ -583,10 +674,14 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 or list(g.objects(item, SDO.provider))
             ):
                 publishername = (
-                    g.value(publisher, FOAF.name) or (g.value(publisher, SMA.name)) or (g.value(publisher, SDO.name))
+                    g.value(publisher, FOAF.name)
+                    or (g.value(publisher, SMA.name))
+                    or (g.value(publisher, SDO.name))
                 )
                 publisheruri = (
-                    g.value(publisher, FOAF.homepage) or (g.value(publisher, SMA.url)) or (g.value(publisher, SDO.url))
+                    g.value(publisher, FOAF.homepage)
+                    or (g.value(publisher, SMA.url))
+                    or (g.value(publisher, SDO.url))
                 )
                 if publisheruri:
                     meta["publisher"].append(str(publisheruri))
@@ -635,11 +730,17 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 meta["contributor"].append(str(contributor))
 
         if not meta.get("license"):
-            license_item = g.value(item, DCTERMS.license) or g.value(item, SDO.license) or g.value(item, SMA.license)
+            license_item = (
+                g.value(item, DCTERMS.license)
+                or g.value(item, SDO.license)
+                or g.value(item, SMA.license)
+            )
             # schema.org
             license_value = str(license_item)
             if g.value(license_item, SDO.url) or g.value(license_item, SMA.url):
-                license_value = g.value(license_item, SDO.url) or g.value(license_item, SMA.url)
+                license_value = g.value(license_item, SDO.url) or g.value(
+                    license_item, SMA.url
+                )
             meta["license"] = str(license_value)
         if not meta.get("access_level"):
             meta["access_level"] = str(
@@ -668,7 +769,10 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 dctrelation = g.value(item, dctrelationtype)
                 if dctrelation:
                     meta["related_resources"].append(
-                        {"related_resource": str(dctrelation), "relation_type": str(dctrelationtype)}
+                        {
+                            "related_resource": str(dctrelation),
+                            "relation_type": str(dctrelationtype),
+                        }
                     )
             for schemarelationtype in [
                 SMA.isPartOf,
@@ -687,7 +791,10 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 schemarelation = g.value(item, schemarelationtype)
                 if schemarelation:
                     meta["related_resources"].append(
-                        {"related_resource": str(schemarelation), "relation_type": str(schemarelationtype)}
+                        {
+                            "related_resource": str(schemarelation),
+                            "relation_type": str(schemarelationtype),
+                        }
                     )
 
         if meta:
@@ -718,12 +825,20 @@ class MetaDataCollectorRdf(MetaDataCollector):
         ontologies = list(graph[: RDF.type : OWL.Ontology])
         if len(ontologies) > 0:
             self.logger.info("FsF-F2-01M : RDF Graph seems to represent a OWL Ontology")
-            ont_metadata = self.get_core_metadata(graph, ontologies[0], type="DefinedTermSet")
+            ont_metadata = self.get_core_metadata(
+                graph, ontologies[0], type="DefinedTermSet"
+            )
         else:
-            ontologies = list(graph[: RDF.type : SKOS.ConceptScheme]) or list(graph[: RDF.type : SKOS.Collection])
+            ontologies = list(graph[: RDF.type : SKOS.ConceptScheme]) or list(
+                graph[: RDF.type : SKOS.Collection]
+            )
             if len(ontologies) > 0:
-                self.logger.info("FsF-F2-01M : RDF Graph seems to represent a SKOS Ontology")
-                ont_metadata = self.get_core_metadata(graph, ontologies[0], type="DefinedTermSet")
+                self.logger.info(
+                    "FsF-F2-01M : RDF Graph seems to represent a SKOS Ontology"
+                )
+                ont_metadata = self.get_core_metadata(
+                    graph, ontologies[0], type="DefinedTermSet"
+                )
             else:
                 self.logger.info("FsF-F2-01M : Could not parse Ontology RDF")
         return ont_metadata
@@ -750,7 +865,14 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 nsbj = len(list(graph.subjects(object=cw)))
                 nprp = len(list(graph.objects(subject=cw)))
                 graph_entity_list.append(
-                    {"item": cw, "nosbj": nsbj, "noprp": nprp, "types": types_names, "ns": namespaces, "score": 0}
+                    {
+                        "item": cw,
+                        "nosbj": nsbj,
+                        "noprp": nprp,
+                        "types": types_names,
+                        "ns": namespaces,
+                        "score": 0,
+                    }
                 )
             # score
             if graph_entity_list:
@@ -768,13 +890,18 @@ class MetaDataCollectorRdf(MetaDataCollector):
                     score = prp_score + sbj_score / 2
                     graph_entity_list[gk]["score"] = score
                     gk += 1
-                main_entity = (sorted(graph_entity_list, key=lambda d: d["score"], reverse=True))[0]
+                main_entity = (
+                    sorted(graph_entity_list, key=lambda d: d["score"], reverse=True)
+                )[0]
                 if not creative_work_detected:
                     self.logger.info(
                         "FsF-F2-01M : Detected main entity found in RDF graph seems not to be a creative work type"
                     )
                 else:
-                    self.logger.info("FsF-F2-01M : Detected main entity in RDF -: " + str(main_entity))
+                    self.logger.info(
+                        "FsF-F2-01M : Detected main entity in RDF -: "
+                        + str(main_entity)
+                    )
             main_entity_item, main_entity_type, main_entity_namespace = (
                 main_entity.get("item"),
                 main_entity.get("types"),
@@ -782,7 +909,8 @@ class MetaDataCollectorRdf(MetaDataCollector):
             )
         except Exception as ee:
             self.logger.info(
-                "FsF-F2-01M : Failed to detect main entity in metadata given as RDF Graph due to error -:" + str(ee)
+                "FsF-F2-01M : Failed to detect main entity in metadata given as RDF Graph due to error -:"
+                + str(ee)
             )
             print("MAIN ENTITY IDENTIFICATION ERROR: ", ee)
         return main_entity_item, main_entity_type, main_entity_namespace
@@ -832,7 +960,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
         return cand_creative_work, object_types_dict"""
 
     def get_schemaorg_metadata(self, graph):
-        main_entity_id, main_entity_type, main_entity_namespace = self.get_main_entity(graph)
+        main_entity_id, main_entity_type, main_entity_namespace = self.get_main_entity(
+            graph
+        )
         creative_work_type = "Dataset"
         if main_entity_id:
             creative_work = main_entity_id
@@ -844,17 +974,23 @@ class MetaDataCollectorRdf(MetaDataCollector):
         # this is tested by namepace elsewhere
         if "schema.org" in str(main_entity_namespace):
             self.main_entity_format = str(SDO)
-            schema_metadata = self.get_core_metadata(graph, creative_work, type=creative_work_type)
-            # "access_free"
-            access_free = graph.value(creative_work, SMA.isAccessibleForFree) or graph.value(
-                creative_work, SDO.isAccessibleForFree
+            schema_metadata = self.get_core_metadata(
+                graph, creative_work, type=creative_work_type
             )
+            # "access_free"
+            access_free = graph.value(
+                creative_work, SMA.isAccessibleForFree
+            ) or graph.value(creative_work, SDO.isAccessibleForFree)
             if access_free:
                 schema_metadata["access_free"] = access_free
             # object size (total)
-            object_size = graph.value(creative_work, SMA.size) or graph.value(creative_work, SDO.size)
+            object_size = graph.value(creative_work, SMA.size) or graph.value(
+                creative_work, SDO.size
+            )
             if object_size:
-                size_value = graph.value(object_size, SMA.value) or graph.value(object_size, SDO.value)
+                size_value = graph.value(object_size, SMA.value) or graph.value(
+                    object_size, SDO.value
+                )
                 if not size_value:
                     size_value = object_size
                 schema_metadata["object_size"] = size_value
@@ -922,40 +1058,52 @@ class MetaDataCollectorRdf(MetaDataCollector):
                         {"url": str(durl), "type": dtype, "size": str(dsize)}
                     )
 
-            potential_action = list(graph.objects(creative_work, SMA.potentialAction)) + list(
-                graph.objects(creative_work, SDO.potentialAction)
-            )
+            potential_action = list(
+                graph.objects(creative_work, SMA.potentialAction)
+            ) + list(graph.objects(creative_work, SDO.potentialAction))
 
             for potaction in potential_action:
                 service_url, service_desc, service_type = None, None, None
-                entry_point = graph.value(potaction, SMA.EntryPoint) or graph.value(potaction, SDO.EntryPoint)
+                entry_point = graph.value(potaction, SMA.EntryPoint) or graph.value(
+                    potaction, SDO.EntryPoint
+                )
                 if not entry_point:
-                    service_url = graph.value(potaction, SMA.target) or graph.value(potaction, SDO.target)
+                    service_url = graph.value(potaction, SMA.target) or graph.value(
+                        potaction, SDO.target
+                    )
 
                 else:
-                    service_url = graph.value(entry_point, SMA.url) or graph.value(entry_point, SDO.url)
-                    service_desc = graph.value(entry_point, SMA.urlTemplate) or graph.value(
-                        entry_point, SDO.urlTemplate
+                    service_url = graph.value(entry_point, SMA.url) or graph.value(
+                        entry_point, SDO.url
                     )
-                    service_type = graph.value(entry_point, SMA.additionalType) or graph.value(
-                        entry_point, SDO.additionalType
-                    )
+                    service_desc = graph.value(
+                        entry_point, SMA.urlTemplate
+                    ) or graph.value(entry_point, SDO.urlTemplate)
+                    service_type = graph.value(
+                        entry_point, SMA.additionalType
+                    ) or graph.value(entry_point, SDO.additionalType)
                 if service_url:
                     schema_metadata["object_content_identifier"].append(
-                        {"url": service_url, "type": service_type, "service": service_desc}
+                        {
+                            "url": service_url,
+                            "type": service_type,
+                            "service": service_desc,
+                        }
                     )
             # temporalCoverage
             schema_metadata["coverage_temporal"] = []
-            for temporal_info in list(graph.objects(creative_work, SMA.temporalCoverage)) + list(
-                graph.objects(creative_work, SDO.temporalCoverage)
-            ):
+            for temporal_info in list(
+                graph.objects(creative_work, SMA.temporalCoverage)
+            ) + list(graph.objects(creative_work, SDO.temporalCoverage)):
                 temp_dates = []
                 for temp_part in str(temporal_info).split(" "):
                     try:
                         temp_dates.append(str(dateutil.parser.parse(temp_part)))
                     except:
                         pass
-                schema_metadata["coverage_temporal"].append({"dates": temp_dates, "name": str(temporal_info)})
+                schema_metadata["coverage_temporal"].append(
+                    {"dates": temp_dates, "name": str(temporal_info)}
+                )
             # spatialCoverage
             schema_metadata["coverage_spatial"] = []
             for spatial in (
@@ -967,18 +1115,38 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 spatial_info = {}
                 if graph.value(spatial, SMA.name) or graph.value(spatial, SDO.name):
                     # Place name
-                    spatial_info["name"] = graph.value(spatial, SMA.name) or graph.value(spatial, SDO.name)
-                if graph.value(spatial, SMA.latitude) or graph.value(spatial, SDO.latitude):
+                    spatial_info["name"] = graph.value(
+                        spatial, SMA.name
+                    ) or graph.value(spatial, SDO.name)
+                if graph.value(spatial, SMA.latitude) or graph.value(
+                    spatial, SDO.latitude
+                ):
                     spatial_info["coordinates"] = [
-                        (graph.value(spatial, SMA.latitude) or graph.value(spatial, SDO.latitude)),
-                        (graph.value(spatial, SMA.longitude) or graph.value(spatial, SDO.longitude)),
+                        (
+                            graph.value(spatial, SMA.latitude)
+                            or graph.value(spatial, SDO.latitude)
+                        ),
+                        (
+                            graph.value(spatial, SMA.longitude)
+                            or graph.value(spatial, SDO.longitude)
+                        ),
                     ]
                 elif graph.value(spatial, SMA.geo) or graph.value(spatial, SDO.geo):
-                    spatial_geo = graph.value(spatial, SMA.geo) or graph.value(spatial, SDO.geo)
-                    if graph.value(spatial_geo, SMA.latitude) or graph.value(spatial_geo, SDO.longitude):
+                    spatial_geo = graph.value(spatial, SMA.geo) or graph.value(
+                        spatial, SDO.geo
+                    )
+                    if graph.value(spatial_geo, SMA.latitude) or graph.value(
+                        spatial_geo, SDO.longitude
+                    ):
                         spatial_info["coordinates"] = [
-                            (graph.value(spatial_geo, SMA.latitude) or graph.value(spatial_geo, SDO.latitude)),
-                            (graph.value(spatial_geo, SMA.longitude) or graph.value(spatial_geo, SDO.longitude)),
+                            (
+                                graph.value(spatial_geo, SMA.latitude)
+                                or graph.value(spatial_geo, SDO.latitude)
+                            ),
+                            (
+                                graph.value(spatial_geo, SMA.longitude)
+                                or graph.value(spatial_geo, SDO.longitude)
+                            ),
                         ]
                     else:
                         spatial_extent = (
@@ -989,15 +1157,21 @@ class MetaDataCollectorRdf(MetaDataCollector):
                             or graph.value(spatial_geo, SMA.line)
                             or graph.value(spatial_geo, SDO.line)
                         )
-                        spatial_info["coordinates"] = re.split(r"[\s,]+", str(spatial_extent))
+                        spatial_info["coordinates"] = re.split(
+                            r"[\s,]+", str(spatial_extent)
+                        )
                 if spatial_info:
                     schema_metadata["coverage_spatial"].append(spatial_info)
 
             schema_metadata["measured_variable"] = []
-            for variable in list(graph.objects(creative_work, SMA.variableMeasured)) + list(
-                graph.objects(creative_work, SDO.variableMeasured)
-            ):
-                variablename = graph.value(variable, SMA.name) or graph.value(variable, SDO.name) or None
+            for variable in list(
+                graph.objects(creative_work, SMA.variableMeasured)
+            ) + list(graph.objects(creative_work, SDO.variableMeasured)):
+                variablename = (
+                    graph.value(variable, SMA.name)
+                    or graph.value(variable, SDO.name)
+                    or None
+                )
 
                 if variablename:
                     schema_metadata["measured_variable"].append(variablename)
@@ -1007,9 +1181,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
             # two routes to API services provided by repositories
             # 1) via the schema.org/DataCatalog 'offers' property
             # 2) via the schema.org/Project 'hasofferCatalog' property
-            offer_catalog = graph.value(creative_work, SMA.hasOfferCatalog) or graph.value(
-                creative_work, SDO.hasOfferCatalog
-            )
+            offer_catalog = graph.value(
+                creative_work, SMA.hasOfferCatalog
+            ) or graph.value(creative_work, SDO.hasOfferCatalog)
 
             data_services = list(graph.objects(creative_work, SMA.offers)) + list(
                 graph.objects(creative_work, SDO.offers)
@@ -1027,17 +1201,23 @@ class MetaDataCollectorRdf(MetaDataCollector):
                     service_rdf_type = graph.value(data_service, RDF.type)
                     service_offer = data_service
                 else:
-                    service_offer = graph.value(data_service, SMA.itemOffered) or graph.value(
-                        data_service, SDO.itemOffered
-                    )
+                    service_offer = graph.value(
+                        data_service, SMA.itemOffered
+                    ) or graph.value(data_service, SDO.itemOffered)
                     service_rdf_type = graph.value(service_offer, RDF.type)
 
-                if "WebAPI" in str(service_rdf_type) or "Service" in str(service_rdf_type):
-                    service_url = graph.value(service_offer, SMA.url) or graph.value(service_offer, SDO.url)
-                    service_type = graph.value(service_offer, SMA.documentation) or graph.value(
-                        service_offer, SDO.documentation
+                if "WebAPI" in str(service_rdf_type) or "Service" in str(
+                    service_rdf_type
+                ):
+                    service_url = graph.value(service_offer, SMA.url) or graph.value(
+                        service_offer, SDO.url
                     )
-                    schema_metadata["metadata_service"].append({"url": str(service_url), "type": str(service_type)})
+                    service_type = graph.value(
+                        service_offer, SMA.documentation
+                    ) or graph.value(service_offer, SDO.documentation)
+                    schema_metadata["metadata_service"].append(
+                        {"url": str(service_url), "type": str(service_type)}
+                    )
         return schema_metadata
 
     def get_dcat_metadata(self, graph):
@@ -1059,7 +1239,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
         LOCN = Namespace("http://www.w3.org/ns/locn#")
         dcat_root_type = "Dataset"
         datasets = []
-        main_entity_id, _main_entity_type, _main_entity_namespace = self.get_main_entity(graph)
+        main_entity_id, _main_entity_type, _main_entity_namespace = (
+            self.get_main_entity(graph)
+        )
         if main_entity_id:
             if dcat_root_type == "Catalog":
                 self.logger.info(
@@ -1076,10 +1258,14 @@ class MetaDataCollectorRdf(MetaDataCollector):
         table = list(graph[: RDF.type : CSVW.Column])
         # print("TABLE", len(table))
         if len(datasets) > 1:
-            self.logger.info("FsF-F2-01M : Found more than one DCAT Dataset description, will use first one")
+            self.logger.info(
+                "FsF-F2-01M : Found more than one DCAT Dataset description, will use first one"
+            )
         if len(datasets) > 0:
             self.main_entity_format = str(DCAT)
-            dcat_metadata = self.get_core_metadata(graph, datasets[0], type=dcat_root_type)
+            dcat_metadata = self.get_core_metadata(
+                graph, datasets[0], type=dcat_root_type
+            )
             # distribution
             distribution = graph.objects(datasets[0], DCAT.distribution)
             # do something (check for table headers) with the table here..
@@ -1094,18 +1280,24 @@ class MetaDataCollectorRdf(MetaDataCollector):
                     or graph.value(dist, DCAT.accessService)
                 ):
                     self.logger.info(
-                        "FsF-F2-01M : Trying to retrieve DCAT distributions from remote location -:" + str(dist)
+                        "FsF-F2-01M : Trying to retrieve DCAT distributions from remote location -:"
+                        + str(dist)
                     )
                     try:
                         distgraph = rdflib.Graph()
                         disturl = str(dist)
-                        distresponse = requests.get(disturl, headers={"Accept": "application/rdf+xml"})
+                        print(f"Querying {disturl} for {dist}")
+                        distresponse = requests.get(
+                            disturl, headers={"Accept": "application/rdf+xml"}
+                        )
                         if distresponse.text:
-                            distgraph.parse(data=distresponse.text, format="application/rdf+xml")
-                            extdist = list(distgraph[: RDF.type : DCAT.Distribution])
-                            durl = distgraph.value(extdist[0], DCAT.accessURL) or distgraph.value(
-                                extdist[0], DCAT.downloadURL
+                            distgraph.parse(
+                                data=distresponse.text, format="application/rdf+xml"
                             )
+                            extdist = list(distgraph[: RDF.type : DCAT.Distribution])
+                            durl = distgraph.value(
+                                extdist[0], DCAT.accessURL
+                            ) or distgraph.value(extdist[0], DCAT.downloadURL)
                             dsize = distgraph.value(extdist[0], DCAT.byteSize)
                             dtype = (
                                 distgraph.value(extdist[0], DCAT.mediaType)
@@ -1113,11 +1305,13 @@ class MetaDataCollectorRdf(MetaDataCollector):
                                 or distgraph.value(extdist[0], DCTERMS.format)
                             )
                             self.logger.info(
-                                "FsF-F2-01M : Found DCAT distribution URL info from remote location -:" + str(durl)
+                                "FsF-F2-01M : Found DCAT distribution URL info from remote location -:"
+                                + str(durl)
                             )
                     except Exception:
                         self.logger.info(
-                            "FsF-F2-01M : Failed to retrieve DCAT distributions from remote location -:" + str(dist)
+                            "FsF-F2-01M : Failed to retrieve DCAT distributions from remote location -:"
+                            + str(dist)
                         )
                         # print(e)
                         durl = str(dist)
@@ -1127,16 +1321,18 @@ class MetaDataCollectorRdf(MetaDataCollector):
                         dtype = graph.value(dcat_service, DCTERMS.conformsTo)
                         dservice = graph.value(dcat_service, DCAT.endpointDescription)
                 else:
-                    durl = graph.value(dist, DCAT.accessURL) or graph.value(dist, DCAT.downloadURL)
+                    durl = graph.value(dist, DCAT.accessURL) or graph.value(
+                        dist, DCAT.downloadURL
+                    )
 
                     # taking only one just to check if licence is available and not yet set
                     if not dcat_metadata.get("license"):
                         dcat_metadata["license"] = graph.value(dist, DCTERMS.license)
                     # TODO: check if this really works..
                     if not dcat_metadata.get("access_rights"):
-                        dcat_metadata["access_rights"] = graph.value(dist, DCTERMS.accessRights) or graph.value(
-                            dist, DCTERMS.rights
-                        )
+                        dcat_metadata["access_rights"] = graph.value(
+                            dist, DCTERMS.accessRights
+                        ) or graph.value(dist, DCTERMS.rights)
                     dtype = (
                         graph.value(dist, DCAT.mediaType)
                         or graph.value(dist, DC.format)
@@ -1147,7 +1343,12 @@ class MetaDataCollectorRdf(MetaDataCollector):
                     if idutils.is_url(str(durl)):
                         dtype = "/".join(str(dtype).split("/")[-2:])
                     dcat_metadata["object_content_identifier"].append(
-                        {"url": str(durl), "type": dtype, "size": str(dsize), "service": str(dservice)}
+                        {
+                            "url": str(durl),
+                            "type": dtype,
+                            "size": str(dsize),
+                            "service": str(dservice),
+                        }
                     )
 
             if dcat_metadata["object_content_identifier"]:
@@ -1161,12 +1362,16 @@ class MetaDataCollectorRdf(MetaDataCollector):
             for data_service in data_services:
                 service_url = graph.value(data_service, DCAT.endpointURL)
                 service_type = graph.value(data_service, DCTERMS.conformsTo)
-                dcat_metadata["metadata_service"].append({"url": str(service_url), "type": str(service_type)})
+                dcat_metadata["metadata_service"].append(
+                    {"url": str(service_url), "type": str(service_type)}
+                )
             # spatial coverage
             spatial_coverages = graph.objects(datasets[0], DCTERMS.spatial)
             dcat_metadata["coverage_spatial"] = []
             for spatial in spatial_coverages:
-                spatial_name = graph.value(spatial, RDFS.label) or graph.value(spatial, SKOS.prefLabel)
+                spatial_name = graph.value(spatial, RDFS.label) or graph.value(
+                    spatial, SKOS.prefLabel
+                )
                 spatial_coordinate_data = (
                     graph.value(spatial, LOCN.geometry)
                     or graph.value(spatial, DCAT.bbox)
@@ -1174,7 +1379,9 @@ class MetaDataCollectorRdf(MetaDataCollector):
                 )
                 spatial_coordinates = spatial_coordinate_data
                 # TODO: finalize parse_dcat_spatial and replace above with: spatial_coordinates = parse_dcat_spatial(spatial_coordinate_data)
-                dcat_metadata["coverage_spatial"].append({"name": spatial_name, "coordinates": spatial_coordinates})
+                dcat_metadata["coverage_spatial"].append(
+                    {"name": spatial_name, "coordinates": spatial_coordinates}
+                )
         return dcat_metadata
 
     def parse_dcat_spatial(self, spatial_text):

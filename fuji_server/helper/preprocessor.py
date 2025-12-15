@@ -106,6 +106,7 @@ class Preprocessor:
     def set_remote_log_info(cls, host, path):
         if host:
             try:
+                print(f"Setting remote log info for {host + path}")
                 request = requests.get("http://" + host + path)
                 if request.status_code == 200:
                     cls.remote_log_host = host
@@ -261,6 +262,7 @@ class Preprocessor:
             print("updating re3data dois")
             p = {"query": "re3data_id:*"}
             try:
+                print(f"Querying {cls.DATACITE_API_REPO} for {p}")
                 req = requests.get(
                     cls.DATACITE_API_REPO, params=p, headers=cls.header, timeout=5
                 )
@@ -268,6 +270,7 @@ class Preprocessor:
                 for r in raw["data"]:
                     cls.re3repositories[r["id"]] = r["attributes"]["re3data"]
                 while "next" in raw["links"]:
+                    print(f"Querying {raw['links']['next']} for {p}")
                     response = requests.get(raw["links"]["next"]).json()
                     for r in response["data"]:
                         cls.re3repositories[r["id"]] = r["attributes"]["re3data"]
@@ -302,6 +305,7 @@ class Preprocessor:
         else:
             # cls.SPDX_URL = license_path
             try:
+                print(f"Querying {cls.SPDX_URL} for licenses")
                 r = requests.get(cls.SPDX_URL)
                 try:
                     if r.status_code == 200:
@@ -473,6 +477,7 @@ class Preprocessor:
         isActive = False
         if cls.uri_validator(url):
             try:
+                print(f"Checking if {url} is active")
                 r = requests.head(url)
                 if not (400 <= r.status_code < 600):
                     isActive = True

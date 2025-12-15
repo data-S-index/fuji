@@ -41,7 +41,9 @@ class MetaDataCatalogueGoogleDataSearch(MetaDataCatalogue):
 
         self.logger = logger
         self.source = self.getEnumSourceNames().GOOGLE_DATASET.value
-        self.google_cache_db_path = os.path.join(Preprocessor.fuji_server_dir, "data", "google_cache.db")
+        self.google_cache_db_path = os.path.join(
+            Preprocessor.fuji_server_dir, "data", "google_cache.db"
+        )
 
         self.google_custom_search_id = Preprocessor.google_custom_search_id
         self.google_custom_search_api_key = Preprocessor.google_custom_search_api_key
@@ -52,7 +54,11 @@ class MetaDataCatalogueGoogleDataSearch(MetaDataCatalogue):
         try:
             con = sl.connect(self.google_cache_db_path)
             with con:
-                samplef = pd.read_sql_query("SELECT uri FROM google_links ORDER BY RANDOM() LIMIT " + str(limit), con)
+                samplef = pd.read_sql_query(
+                    "SELECT uri FROM google_links ORDER BY RANDOM() LIMIT "
+                    + str(limit),
+                    con,
+                )
                 sample = samplef["uri"].values.tolist()
         except Exception as e:
             print("random_sample error: ", e)
@@ -80,7 +86,9 @@ class MetaDataCatalogueGoogleDataSearch(MetaDataCatalogue):
                     dbres = con.execute(dbquery)
                     found_google_links = dbres.fetchall()
             except Exception as e:
-                self.logger.warning("FsF-F4-01M : Google Search Cache DB Query Error: -:" + str(e))
+                self.logger.warning(
+                    "FsF-F4-01M : Google Search Cache DB Query Error: -:" + str(e)
+                )
 
         if found_google_links:
             self.islisted = True
@@ -100,10 +108,14 @@ class MetaDataCatalogueGoogleDataSearch(MetaDataCatalogue):
 
         if self.islisted:
             self.logger.info(
-                "FsF-F4-01M : Found identifier in Google Dataset Search cache -:" + str(found_google_links)
+                "FsF-F4-01M : Found identifier in Google Dataset Search cache -:"
+                + str(found_google_links)
             )
         else:
-            self.logger.info("FsF-F4-01M : Identifier not listed in Google Dataset Search cache -:" + str(pidlist))
+            self.logger.info(
+                "FsF-F4-01M : Identifier not listed in Google Dataset Search cache -:"
+                + str(pidlist)
+            )
 
         return response
 
@@ -111,7 +123,9 @@ class MetaDataCatalogueGoogleDataSearch(MetaDataCatalogue):
         gs = pd.read_csv(google_cache_file)
         # google_cache_db_path = os.path.join(Preprocessor.fuji_server_dir, 'data','google_cache.db')
         con = sl.connect(self.google_cache_db_path)
-        gf = pd.DataFrame(pd.concat([gs["url"], gs["doi"]]), columns=["uri"]).drop_duplicates()
+        gf = pd.DataFrame(
+            pd.concat([gs["url"], gs["doi"]]), columns=["uri"]
+        ).drop_duplicates()
         gf["source"] = 0
         gf.to_sql("google_links", con, if_exists="replace", index=False)
         with con:
@@ -123,7 +137,11 @@ class MetaDataCatalogueGoogleDataSearch(MetaDataCatalogue):
         con = sl.connect(self.google_cache_db_path)
         try:
             with con:
-                con.execute("INSERT INTO google_links (uri, source) values ('" + str(url_to_save) + "',1)")
+                con.execute(
+                    "INSERT INTO google_links (uri, source) values ('"
+                    + str(url_to_save)
+                    + "',1)"
+                )
             return
         except Exception as e:
             print("GOOGLE CACHE INSERT FAILED", e)
@@ -139,7 +157,10 @@ class MetaDataCatalogueGoogleDataSearch(MetaDataCatalogue):
         }
         found_url_in_google = False
         try:
-            response = requests.get(google, headers=headers, cookies={"CONSENT": "YES+1"})
+            print(f"Querying {google} for {url_to_test}")
+            response = requests.get(
+                google, headers=headers, cookies={"CONSENT": "YES+1"}
+            )
             soup = BeautifulSoup(response.content, "html.parser")
             not_indexed = re.compile("did not match any documents")
             if soup(text=not_indexed):
@@ -167,6 +188,7 @@ class MetaDataCatalogueGoogleDataSearch(MetaDataCatalogue):
                         + "&key="
                         + self.google_custom_search_api_key
                     )
+                    print(f"Querying {google_url} for {url_to_test}")
                     res = requests.get(google_url)
                     if res:
                         try:
@@ -180,7 +202,9 @@ class MetaDataCatalogueGoogleDataSearch(MetaDataCatalogue):
                         except Exception as e:
                             print(e)
                 except Exception as e:
-                    self.logger.warning("FsF-F4-01M : Google Custom Search Query Error: -:" + str(e))
+                    self.logger.warning(
+                        "FsF-F4-01M : Google Custom Search Query Error: -:" + str(e)
+                    )
             return found_url_in_google
 
     def init_google_custom_search(self, custom_search_id, api_key):

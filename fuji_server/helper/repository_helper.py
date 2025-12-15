@@ -30,19 +30,28 @@ class RepositoryHelper:
 
     def lookup_re3data(self):
         if self.client_id:  # and self.pid_scheme:
-            re3doi = RepositoryHelper.DATACITE_REPOSITORIES.get(self.client_id)  # {client_id,re3doi}
+            print(f"Looking up re3data for {self.client_id}")
+            re3doi = RepositoryHelper.DATACITE_REPOSITORIES.get(
+                self.client_id
+            )  # {client_id,re3doi}
+            print(f"Looking up re3data for {self.client_id} - {re3doi}")
             if re3doi:
                 if idutils.is_doi(re3doi):
-                    short_re3doi = idutils.normalize_pid(re3doi, scheme="doi")  # https://doi.org/10.17616/R3XS37
+                    short_re3doi = idutils.normalize_pid(
+                        re3doi, scheme="doi"
+                    )  # https://doi.org/10.17616/R3XS37
                 else:
                     re3doi = None
 
             # pid -> clientId -> repo doi-> re3id, and query repository metadata from re3api
             if re3doi:
-                self.logger.info("FsF-R1.3-01M : Found match re3data (DOI-based) record")
+                self.logger.info(
+                    "FsF-R1.3-01M : Found match re3data (DOI-based) record"
+                )
                 query_url = (
-                    Preprocessor.RE3DATA_API + "?query=" + short_re3doi
-                )  # https://re3data.org/api/beta/repositories?query=
+                    Preprocessor.RE3DATA_API
+                )  # Custom endpoint that returns the full XML file
+                print(f"Querying {query_url}")
                 q = RequestHelper(url=query_url)
                 q.setAcceptType(AcceptTypes.xml)
                 _re_source, xml = q.content_negotiate(metric_id="FsF-R1.3-01M")
@@ -51,22 +60,54 @@ class RepositoryHelper:
                         xml = xml.decode().encode()
                     root = etree.fromstring(xml)
 
-                    # <link href="https://www.re3data.org/api/beta/repository/r3d100010134" rel="self" />
-                    re3link = root.xpath("//link")[0].attrib["href"]
+                    # Parse the full list and filter by DOI
+                    # Find the repository element where the doi matches short_re3doi
+                    repositories = root.xpath("//repository")
+                    re3link = None
+                    for repo in repositories:
+                        doi_elements = repo.xpath(".//doi")
+                        if doi_elements:
+                            repo_doi = doi_elements[0].text
+                            # Normalize both DOIs for comparison
+                            if repo_doi:
+                                normalized_repo_doi = idutils.normalize_pid(
+                                    repo_doi, scheme="doi"
+                                )
+                                if normalized_repo_doi == short_re3doi:
+                                    # Found matching repository, extract the link
+                                    print(f"Found matching repository: {repo_doi}")
+                                    link_elements = repo.xpath(".//link[@rel='self']")
+                                    if link_elements:
+                                        re3link = link_elements[0].attrib.get("href")
+                                        break
+
                     if re3link is not None:
-                        self.logger.info("FsF-R1.3-01M : Found match re3data metadata record -: " + str(re3link))
+                        self.logger.info(
+                            "FsF-R1.3-01M : Found match re3data metadata record -: "
+                            + str(re3link)
+                        )
                         # query reposiroty metadata
                         q2 = RequestHelper(url=re3link)
                         q2.setAcceptType(AcceptTypes.xml)
-                        _re3_source, re3_response = q2.content_negotiate(metric_id="FsF-R1.3-01M")
+                        _re3_source, re3_response = q2.content_negotiate(
+                            metric_id="FsF-R1.3-01M"
+                        )
                         self.re3metadata_raw = re3_response
                         self.parseRe3data()
+                    else:
+                        self.logger.warning(
+                            "FsF-R1.3-01M : No matching repository found in re3data list for DOI: "
+                            + str(short_re3doi)
+                        )
                 except Exception as e:
                     self.logger.warning(
-                        "FsF-R1.3-01M : Malformed or none re3data (DOI-based) record received: " + str(e)
+                        "FsF-R1.3-01M : Malformed or none re3data (DOI-based) record received: "
+                        + str(e)
                     )
             else:
-                self.logger.warning("FsF-R1.3-01M : No DOI of client id is available from datacite api")
+                self.logger.warning(
+                    "FsF-R1.3-01M : No DOI of client id is available from datacite api"
+                )
 
     def parseRe3data(self):
         # http://schema.re3data.org/3-0/re3data-example-V3-0.xml
@@ -103,7 +144,10 @@ class RepositoryHelper:
                 if apiType in RepositoryHelper.RE3DATA_APITYPES:
                     self.repo_apis[a.attrib["apiType"]] = a.text
             # standards = root.xpath('//r3d:metadataStandard/r3d:metadataStandardName', namespaces=RepositoryHelper.ns)
-            standards = root.xpath("//r3d:metadataStandard/r3d:metadataStandardURL", namespaces=RepositoryHelper.ns)
+            standards = root.xpath(
+                "//r3d:metadataStandard/r3d:metadataStandardURL",
+                namespaces=RepositoryHelper.ns,
+            )
             self.repo_standards = [s.text for s in standards]
             # print('#### ', self.repo_standards)
 

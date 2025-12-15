@@ -54,6 +54,7 @@ class MetaDataCatalogueDataCite(MetaDataCatalogue):
         # pick a random apiURI from the list
         apiURI = random.choice(self.apiURIs)
         try:
+            print(f"Querying {apiURI} for {pid}")
             res = requests.get(apiURI + "/" + pid, timeout=5)
             self.logger.info("FsF-F4-01M : Querying DataCite API for -:" + str(pid))
             if res.status_code == 200:
