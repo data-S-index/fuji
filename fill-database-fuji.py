@@ -127,60 +127,115 @@ def get_fuji_score_and_date(
 def fetch_jobs_from_api() -> List[Dict[str, Any]]:
     """
     Fetch jobs from the API endpoints (priority first, then regular).
+    Uses exponential backoff retry logic for API errors.
 
     Returns:
         List of job dictionaries with 'id' and 'identifier' keys
     """
+    print("  🔄 Starting to fetch jobs from API...")
     all_jobs = []
 
     # Check for shutdown before starting
     if shutdown_event.is_set():
+        print("  ⚠️  Shutdown requested, skipping job fetch")
         return all_jobs
 
-    # Fetch priority jobs first
-    print(f"  📥 Fetching priority jobs from {PRIORITY_JOBS_API_URL}...")
-    try:
-        response = requests.get(PRIORITY_JOBS_API_URL, timeout=30.0)
-        response.raise_for_status()
-        priority_jobs = response.json()
-        print(
-            f"  ✅ Priority jobs response: {len(priority_jobs) if isinstance(priority_jobs, list) else 'not a list'}"
-        )
-        if isinstance(priority_jobs, list):
-            all_jobs.extend(priority_jobs)
-            print(f"  📋 Added {len(priority_jobs)} priority jobs")
-    except KeyboardInterrupt:
-        # Re-raise to allow proper shutdown handling
-        raise
-    except Exception as e:
-        print(f"  ⚠️  Error fetching priority jobs: {e}")
+    # Fetch priority jobs first with exponential backoff retry
+    print(f"  📥 Step 1: Fetching priority jobs from {PRIORITY_JOBS_API_URL}...")
+    priority_jobs = []
+    for attempt in range(MAX_RETRIES):
+        if shutdown_event.is_set():
+            print("  ⚠️  Shutdown requested during priority jobs fetch")
+            break
+
+        try:
+            print(f"  🔄 Priority jobs attempt {attempt + 1}/{MAX_RETRIES}...")
+            response = requests.get(PRIORITY_JOBS_API_URL, timeout=30.0)
+            response.raise_for_status()
+            priority_jobs = response.json()
+            print(
+                f"  ✅ Priority jobs response: {len(priority_jobs) if isinstance(priority_jobs, list) else 'not a list'}"
+            )
+            if isinstance(priority_jobs, list):
+                all_jobs.extend(priority_jobs)
+                print(f"  📋 Added {len(priority_jobs)} priority jobs")
+            break  # Success, exit retry loop
+        except KeyboardInterrupt:
+            # Re-raise to allow proper shutdown handling
+            raise
+        except Exception as e:
+            print(
+                f"  ⚠️  Error fetching priority jobs (attempt {attempt + 1}/{MAX_RETRIES}): {e}"
+            )
+            if attempt < MAX_RETRIES - 1:
+                backoff_time = RETRY_DELAY * (
+                    2**attempt
+                )  # Exponential backoff: 2s, 4s, 8s
+                print(
+                    f"  ⏳ Waiting {backoff_time}s before retry (exponential backoff)..."
+                )
+                if shutdown_event.wait(timeout=backoff_time):
+                    print("  ⚠️  Shutdown requested during backoff")
+                    break
+            else:
+                print(
+                    f"  ❌ Failed to fetch priority jobs after {MAX_RETRIES} attempts"
+                )
 
     # Check for shutdown before fetching regular jobs
     if shutdown_event.is_set():
+        print("  ⚠️  Shutdown requested, skipping regular jobs fetch")
         return all_jobs
 
-    # Fetch regular jobs
-    print(f"  📥 Fetching regular jobs from {JOBS_API_URL}...")
-    try:
-        response = requests.get(JOBS_API_URL, timeout=120.0)
-        response.raise_for_status()
-        regular_jobs = response.json()
-        print(
-            f"  ✅ Regular jobs response: {len(regular_jobs) if isinstance(regular_jobs, list) else 'not a list'}"
-        )
-        if isinstance(regular_jobs, list):
-            all_jobs.extend(regular_jobs)
-            print(f"  📋 Added {len(regular_jobs)} regular jobs")
-    except KeyboardInterrupt:
-        # Re-raise to allow proper shutdown handling
-        raise
-    except Exception as e:
-        print(f"  ⚠️  Error fetching regular jobs: {e}")
+    # Fetch regular jobs with exponential backoff retry
+    print(f"  📥 Step 2: Fetching regular jobs from {JOBS_API_URL}...")
+    regular_jobs = []
+    for attempt in range(MAX_RETRIES):
+        if shutdown_event.is_set():
+            print("  ⚠️  Shutdown requested during regular jobs fetch")
+            break
+
+        try:
+            print(f"  🔄 Regular jobs attempt {attempt + 1}/{MAX_RETRIES}...")
+            response = requests.get(JOBS_API_URL, timeout=120.0)
+            response.raise_for_status()
+            regular_jobs = response.json()
+            print(
+                f"  ✅ Regular jobs response: {len(regular_jobs) if isinstance(regular_jobs, list) else 'not a list'}"
+            )
+            if isinstance(regular_jobs, list):
+                all_jobs.extend(regular_jobs)
+                print(f"  📋 Added {len(regular_jobs)} regular jobs")
+            break  # Success, exit retry loop
+        except KeyboardInterrupt:
+            # Re-raise to allow proper shutdown handling
+            raise
+        except Exception as e:
+            print(
+                f"  ⚠️  Error fetching regular jobs (attempt {attempt + 1}/{MAX_RETRIES}): {e}"
+            )
+            if attempt < MAX_RETRIES - 1:
+                backoff_time = RETRY_DELAY * (
+                    2**attempt
+                )  # Exponential backoff: 2s, 4s, 8s
+                print(
+                    f"  ⏳ Waiting {backoff_time}s before retry (exponential backoff)..."
+                )
+                if shutdown_event.wait(timeout=backoff_time):
+                    print("  ⚠️  Shutdown requested during backoff")
+                    break
+            else:
+                print(f"  ❌ Failed to fetch regular jobs after {MAX_RETRIES} attempts")
 
     # remove any jobs that don't have an identifierType of 'doi'
+    print("  🔍 Step 3: Filtering jobs to only include 'doi' identifierType...")
+    jobs_before_filter = len(all_jobs)
     all_jobs = [job for job in all_jobs if job.get("identifierType") == "doi"]
+    jobs_filtered = jobs_before_filter - len(all_jobs)
+    if jobs_filtered > 0:
+        print(f"  🗑️  Filtered out {jobs_filtered} jobs (non-DOI identifierType)")
 
-    print(f"  📊 Total jobs fetched: {len(all_jobs)}")
+    print(f"  📊 Step 4: Total jobs fetched and filtered: {len(all_jobs)}")
     return all_jobs
 
 
@@ -199,7 +254,7 @@ def score_job(
     job_id = job.get("id")
     identifier = job.get("identifier")
 
-    print(f"  🎯 Scoring job {job_id} with identifier: {identifier}")
+    print(f"  🎯 Starting to score job {job_id} with identifier: {identifier}")
 
     if not job_id or not identifier:
         print(f"  ⚠️  Invalid job: missing id or identifier. Job: {job}")
@@ -215,14 +270,18 @@ def score_job(
         try:
             print(f"  🔄 Attempt {attempt + 1}/{MAX_RETRIES} for job {job_id}")
             # Sleep before making FUJI evaluation call
+            print("  ⏳ Random sleep before FUJI evaluation call...")
             random_sleep()
+            print("  ✅ Sleep completed")
 
             # Check for shutdown after sleep
             if shutdown_event.is_set():
                 print(f"  ⚠️  Shutdown requested, aborting job {job_id}")
                 return None
 
-            print(f"  📤 Evaluating identifier: {identifier}")
+            print(
+                f"  📤 Step 1/3: Calling FUJI evaluate_fairness() for identifier: {identifier}"
+            )
             # Call FUJI directly via Python function
             result = evaluate_fairness(
                 object_identifier=identifier,
@@ -232,10 +291,14 @@ def score_job(
                 metric_version="metrics_v0.8",
             )
 
-            print(f"  📊 Evaluation completed for job {job_id}")
+            print(f"  ✅ Step 1/3: FUJI evaluation completed for job {job_id}")
+            print("  📊 Step 2/3: Extracting score and metadata from result...")
 
             # Extract score and evaluation date from result
             score, evaluation_date = get_fuji_score_and_date(result)
+            print(
+                f"  ✅ Step 2/3: Score extraction completed (score: {score}, date: {evaluation_date})"
+            )
 
             # Only return result if we successfully extracted a score
             # Skip jobs where score extraction failed
@@ -249,6 +312,7 @@ def score_job(
                 print(f"  ⏰ Using current time as evaluation date: {evaluation_date}")
 
             # Extract metric version and software version from FUJI result
+            print("  📦 Step 3/3: Extracting metric and software versions...")
             metric_version = result.metric_version or "metrics_v0.8"
             software_version = result.software_version or "unknown"
             print(
@@ -263,7 +327,7 @@ def score_job(
                 "metricVersion": str(metric_version),
                 "softwareVersion": str(software_version),
             }
-            print(f"  ✅ Successfully scored job {job_id}: {result_dict}")
+            print(f"  ✅ Step 3/3: Successfully scored job {job_id}: {result_dict}")
             return result_dict
 
         except Exception as e:
@@ -330,6 +394,7 @@ def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
     Returns:
         True if successful, False otherwise
     """
+    print("  🔄 Starting to post results to API...")
     if not results:
         print("  ℹ️  No results to post")
         return True
@@ -340,7 +405,9 @@ def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
         return False
 
     payload = {"results": results}
-    print(f"  📤 Posting {len(results)} results to {RESULTS_API_URL}")
+    print(
+        f"  📤 Step 1/2: Preparing to post {len(results)} results to {RESULTS_API_URL}"
+    )
     print(
         f"  📋 Results summary: {[{'datasetId': r.get('datasetId'), 'score': r.get('score')} for r in results[:5]]}"
     )
@@ -348,6 +415,7 @@ def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
         print(f"  ... and {len(results) - 5} more results")
 
     try:
+        print("  📤 Step 2/2: Sending POST request to API...")
         response = requests.post(
             RESULTS_API_URL,
             json=payload,
@@ -357,7 +425,7 @@ def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
         print(f"  📥 Response status: {response.status_code}")
         print(f"  📄 Response text: {response.text[:200]}")
         response.raise_for_status()
-        print(f"  ✅ Successfully posted {len(results)} results")
+        print(f"  ✅ Step 2/2: Successfully posted {len(results)} results")
         return True
     except KeyboardInterrupt:
         # Re-raise to allow proper shutdown handling
@@ -380,37 +448,60 @@ def worker_thread(thread_id: int) -> None:
         thread_id: Unique identifier for this thread
     """
     print(f"🧵 Thread {thread_id} starting...")
+    batch_count = 0
 
     while not shutdown_event.is_set():
         try:
+            batch_count += 1
+            print(
+                f"\n🧵 Thread {thread_id}: ========== Starting batch #{batch_count} =========="
+            )
+
             # Check for shutdown before starting
             if shutdown_event.is_set():
+                print(f"🧵 Thread {thread_id}: ⚠️  Shutdown detected before batch start")
                 break
 
             # Fetch jobs from API
-            print(f"🧵 Thread {thread_id}: 📥 Fetching jobs...")
+            print(f"🧵 Thread {thread_id}: 📥 Step 1/4 - Fetching jobs from API...")
             jobs = fetch_jobs_from_api()
+            print(f"🧵 Thread {thread_id}: ✅ Step 1/4 - Completed fetching jobs")
 
             # Check for shutdown after fetching
             if shutdown_event.is_set():
+                print(
+                    f"🧵 Thread {thread_id}: ⚠️  Shutdown detected after fetching jobs"
+                )
                 break
 
             if not jobs:
-                print(f"🧵 Thread {thread_id}: ✅ No jobs found, waiting...")
+                print(
+                    f"🧵 Thread {thread_id}: ℹ️  No jobs found, waiting 10s before next fetch..."
+                )
                 # Check shutdown event during wait
                 if shutdown_event.wait(timeout=10):
+                    print(f"🧵 Thread {thread_id}: ⚠️  Shutdown detected during wait")
                     break
+                print(f"🧵 Thread {thread_id}: 🔄 Continuing to next batch...")
                 continue
 
             # Sleep before processing jobs
+            print(
+                f"🧵 Thread {thread_id}: ⏳ Step 2/4 - Random sleep before processing jobs..."
+            )
             random_sleep()
+            print(f"🧵 Thread {thread_id}: ✅ Step 2/4 - Sleep completed")
 
             # Check for shutdown after sleep
             if shutdown_event.is_set():
-                print(f"🧵 Thread {thread_id}: ⚠️  Shutdown requested, stopping...")
+                print(
+                    f"🧵 Thread {thread_id}: ⚠️  Shutdown requested after sleep, stopping..."
+                )
                 break
 
-            print(f"🧵 Thread {thread_id}: 📊 Processing {len(jobs):,} jobs...")
+            print(
+                f"🧵 Thread {thread_id}: 📊 Step 3/4 - Processing {len(jobs):,} jobs..."
+            )
 
             # Process all jobs
             results = []
@@ -419,17 +510,19 @@ def worker_thread(thread_id: int) -> None:
             for idx, job in enumerate(jobs, 1):
                 # Check for shutdown signal
                 if shutdown_event.is_set():
-                    print(f"🧵 Thread {thread_id}: ⚠️  Shutdown requested, stopping...")
+                    print(
+                        f"🧵 Thread {thread_id}: ⚠️  Shutdown requested during job processing, stopping..."
+                    )
                     break
 
                 print(
-                    f"🧵 Thread {thread_id}: 📝 Processing job {idx}/{len(jobs)}: {job}"
+                    f"🧵 Thread {thread_id}: 📝 Processing job {idx}/{len(jobs)} (ID: {job.get('id')}, Identifier: {job.get('identifier')})"
                 )
                 result = score_job(job)
                 if result is not None:
                     if is_valid_result(result):
                         print(
-                            f"🧵 Thread {thread_id}: ✅ Valid result for job {job.get('id')}"
+                            f"🧵 Thread {thread_id}: ✅ Valid result for job {job.get('id')} (score: {result.get('score')})"
                         )
                         results.append(result)
                     else:
@@ -440,43 +533,63 @@ def worker_thread(thread_id: int) -> None:
                     print(
                         f"🧵 Thread {thread_id}: ⚠️  No result returned for job {job.get('id')}"
                     )
+                print(
+                    f"🧵 Thread {thread_id}: 📊 Progress: {idx}/{len(jobs)} jobs processed, {len(results)} valid results so far"
+                )
+
+            print(
+                f"🧵 Thread {thread_id}: ✅ Step 3/4 - Completed processing all {len(jobs)} jobs, got {len(results)} valid results"
+            )
 
             # Post results to API after processing all jobs
+            print(
+                f"🧵 Thread {thread_id}: 📤 Step 4/4 - Posting {len(results)} results to API..."
+            )
             if results:
-                print(f"🧵 Thread {thread_id}: 📤 Posting {len(results)} results...")
                 success = post_results_to_api(results)
                 if success:
                     print(
-                        f"🧵 Thread {thread_id}: ✅ Successfully posted {len(results)} results"
+                        f"🧵 Thread {thread_id}: ✅ Step 4/4 - Successfully posted {len(results)} results"
                     )
                 else:
                     print(
-                        f"🧵 Thread {thread_id}: ❌ Failed to post {len(results)} results"
+                        f"🧵 Thread {thread_id}: ❌ Step 4/4 - Failed to post {len(results)} results"
                     )
             else:
-                print(f"🧵 Thread {thread_id}: ℹ️  No results to post")
+                print(
+                    f"🧵 Thread {thread_id}: ℹ️  Step 4/4 - No results to post (skipping API call)"
+                )
 
             print(
-                f"🧵 Thread {thread_id}: ✅ Completed batch (processed {len(jobs)} jobs, got {len(results)} results)"
+                f"🧵 Thread {thread_id}: ✅ Completed batch #{batch_count} (processed {len(jobs)} jobs, got {len(results)} results)"
             )
 
             # Sleep before fetching next batch of jobs
+            print(f"🧵 Thread {thread_id}: ⏳ Random sleep before next batch...")
             random_sleep()
+            print(f"🧵 Thread {thread_id}: ✅ Sleep completed, ready for next batch")
 
             # Check for shutdown after sleep
             if shutdown_event.is_set():
-                print(f"🧵 Thread {thread_id}: ⚠️  Shutdown requested, stopping...")
+                print(
+                    f"🧵 Thread {thread_id}: ⚠️  Shutdown requested after sleep, stopping..."
+                )
                 break
 
         except Exception as e:
             if shutdown_event.is_set():
-                print(f"🧵 Thread {thread_id}: ⚠️  Shutdown requested")
+                print(
+                    f"🧵 Thread {thread_id}: ⚠️  Shutdown requested during error handling"
+                )
                 break
-            print(f"🧵 Thread {thread_id}: ❌ Error: {e}")
-            print(f"🧵 Thread {thread_id}: Retrying...")
+            print(f"🧵 Thread {thread_id}: ❌ Error in batch #{batch_count}: {e}")
+            print(f"🧵 Thread {thread_id}: 📋 Error details: {traceback.format_exc()}")
+            print(f"🧵 Thread {thread_id}: ⏳ Waiting 5s before retrying next batch...")
             # Check shutdown event during wait
             if shutdown_event.wait(timeout=5):
+                print(f"🧵 Thread {thread_id}: ⚠️  Shutdown detected during wait")
                 break
+            print(f"🧵 Thread {thread_id}: 🔄 Retrying next batch...")
             continue
 
     print(f"🧵 Thread {thread_id}: 🛑 Stopped")
