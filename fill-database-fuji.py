@@ -230,15 +230,32 @@ def fetch_jobs_from_api() -> List[Dict[str, Any]]:
             else:
                 print(f"  ❌ Failed to fetch regular jobs after {MAX_RETRIES} attempts")
 
+    # Deduplicate jobs by id (keep first occurrence, which prioritizes priority jobs)
+    print("  🔍 Step 3: Deduplicating jobs by id...")
+    jobs_before_dedup = len(all_jobs)
+    seen_ids = set()
+    deduplicated_jobs = []
+    for job in all_jobs:
+        job_id = job.get("id")
+        if job_id is not None and job_id not in seen_ids:
+            seen_ids.add(job_id)
+            deduplicated_jobs.append(job)
+    all_jobs = deduplicated_jobs
+    jobs_deduped = jobs_before_dedup - len(all_jobs)
+    if jobs_deduped > 0:
+        print(f"  🗑️  Removed {jobs_deduped} duplicate job(s)")
+
     # remove any jobs that don't have an identifierType of 'doi'
-    print("  🔍 Step 3: Filtering jobs to only include 'doi' identifierType...")
+    print("  🔍 Step 4: Filtering jobs to only include 'doi' identifierType...")
     jobs_before_filter = len(all_jobs)
     all_jobs = [job for job in all_jobs if job.get("identifierType") == "doi"]
     jobs_filtered = jobs_before_filter - len(all_jobs)
     if jobs_filtered > 0:
         print(f"  🗑️  Filtered out {jobs_filtered} jobs (non-DOI identifierType)")
 
-    print(f"  📊 Step 4: Total jobs fetched and filtered: {len(all_jobs)}")
+    print(
+        f"  📊 Step 5: Total jobs fetched, deduplicated, and filtered: {len(all_jobs)}"
+    )
     return all_jobs
 
 
@@ -387,12 +404,15 @@ def is_valid_result(result: Dict[str, Any]) -> bool:
     return True
 
 
-def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
+def post_results_to_api(
+    results: List[Dict[str, Any]], jobs: List[Dict[str, Any]]
+) -> bool:
     """
     POST results to the API endpoint.
 
     Args:
         results: List of result dictionaries
+        jobs: List of original job dictionaries to validate against
 
     Returns:
         True if successful, False otherwise
@@ -406,6 +426,27 @@ def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
     if shutdown_event.is_set():
         print("  ⚠️  Shutdown requested, skipping result posting")
         return False
+
+    # Validate that all result IDs match input job IDs
+    print("  🔍 Validating result IDs match input job IDs...")
+    job_ids = {job.get("id") for job in jobs if job.get("id") is not None}
+
+    invalid_results = [r for r in results if r.get("datasetId") not in job_ids]
+    if invalid_results:
+        print(
+            f"  ⚠️  Found {len(invalid_results)} result(s) with IDs not in input jobs:"
+        )
+        for invalid in invalid_results:
+            print(
+                f"    ❌ Result ID {invalid.get('datasetId')} not found in input jobs"
+            )
+        print("  🗑️  Filtering out invalid results...")
+        results = [r for r in results if r.get("datasetId") in job_ids]
+        print(f"  ✅ Filtered to {len(results)} valid results")
+
+    if not results:
+        print("  ⚠️  No valid results to post after validation")
+        return True
 
     payload = {"results": results, "machineName": MACHINE_NAME}
     print(
@@ -549,7 +590,7 @@ def worker_thread(thread_id: int) -> None:
                 f"🧵 Thread {thread_id}: 📤 Step 4/4 - Posting {len(results)} results to API..."
             )
             if results:
-                success = post_results_to_api(results)
+                success = post_results_to_api(results, jobs)
                 if success:
                     print(
                         f"🧵 Thread {thread_id}: ✅ Step 4/4 - Successfully posted {len(results)} results"
