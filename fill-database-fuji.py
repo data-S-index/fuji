@@ -694,10 +694,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    global MACHINE_NAME
     INSTANCE_COUNT = args.threads
-    MACHINE_NAME = args.name
-    if MACHINE_NAME:
+    if MACHINE_NAME := args.name:
         print(f"🏷️  Machine name: {MACHINE_NAME}")
     print(f"🚀 Starting Fuji score processing with {INSTANCE_COUNT} threads...")
 
