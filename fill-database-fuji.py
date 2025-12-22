@@ -50,6 +50,9 @@ def random_sleep(min_seconds: float = 30.0, max_seconds: float = 60.0) -> None:
 # Global shutdown event for graceful thread termination
 shutdown_event = threading.Event()
 
+# Global machine name for identifying which machine processed the results
+MACHINE_NAME = "Unknown"
+
 
 def signal_handler(signum, frame):
     """Handle shutdown signals (SIGINT, SIGTERM)."""
@@ -404,7 +407,7 @@ def post_results_to_api(results: List[Dict[str, Any]]) -> bool:
         print("  ⚠️  Shutdown requested, skipping result posting")
         return False
 
-    payload = {"results": results}
+    payload = {"results": results, "machineName": MACHINE_NAME}
     print(
         f"  📤 Step 1/2: Preparing to post {len(results)} results to {RESULTS_API_URL}"
     )
@@ -682,10 +685,20 @@ if __name__ == "__main__":
             "(default: 1, or THREADS env var)"
         ),
     )
+    parser.add_argument(
+        "--name",
+        type=str,
+        default=None,
+        help="Machine name to identify which machine processed the results",
+    )
 
     args = parser.parse_args()
 
+    global MACHINE_NAME
     INSTANCE_COUNT = args.threads
+    MACHINE_NAME = args.name
+    if MACHINE_NAME:
+        print(f"🏷️  Machine name: {MACHINE_NAME}")
     print(f"🚀 Starting Fuji score processing with {INSTANCE_COUNT} threads...")
 
     try:
